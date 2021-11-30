@@ -1,0 +1,33 @@
+<identifier> ::= [-_/.a-zA-Z0-9]
+
+<cmd> ::= <identifier>
+
+<arg> ::= " <identifier> " | <identifier>
+
+<arg_list> ::= <arg_list> <arg>
+	| 
+	
+<simple_command> ::= <cmd> <arg_list>
+
+<simple_command_list> ::= <simple_command_list> '|' <simple_command>
+	| <simple_command>
+
+<redirection> ::= '<' <identifier>
+	| '>' <identifier>
+	| '2' '>' <identifier>
+
+<redirection_list> ::= <redirection_list> <redirection>
+	| 
+
+<background> ::= '&'
+	| 
+
+<terminator> ::= '\n'
+	| ';'
+	| ';' '\n'
+
+<pipeline> ::= <simple_command_list> <redirection_list> <background> <terminator>
+	| <terminator>
+
+<pipeline_list> ::= <pipeline_list> <pipeline>
+	| <pipeline>

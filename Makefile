@@ -1,0 +1,49 @@
+CC 				:= gcc
+CFLAGS 			:= -Wall -g
+TARGET 			:= example
+
+LEX 			:= flex
+BISON 			:= bison
+
+LEX_FILE 		:= lex.l
+BISON_FILE 		:= bison.y
+
+LEX_OUT_C 		:= src/lex.c
+LEX_OUT_H 		:= include/lex.h
+BISON_OUT_H 	:= include/parser.h
+BISON_OUT_C 	:= src/parser.c
+
+LEX_OUT			:= $(LEX_OUT_H) $(LEX_OUT_C)
+BISON_OUT 		:= $(BISON_OUT_H) $(BISON_OUT_C)
+
+OUT_PATH		:= target
+SRC 			:= $(notdir $(wildcard src/*.c test/*.c))
+OBJ			 	:= $(SRC:%.c=%.o)
+INCLUDE_PATH	:= include
+
+CFLAGS			:= ${CFLAGS} -I $(INCLUDE_PATH)
+
+
+all: $(LEX_OUT) $(BISON_OUT) $(TARGET)
+
+# 目标生成
+$(TARGET) : $(OBJ:%.o=$(OUT_PATH)/%.o)
+	$(CC) $(CFLAGS) -lfl -o $(TARGET) $^
+
+$(OUT_PATH)/%.o : src/%.c
+	$(CC) ${CFLAGS} -c -o $@ $<
+
+$(OUT_PATH)/%.o : test/%.c
+	$(CC) ${CFLAGS} -c -o $@ $<
+
+# 生成词法分析文件
+$(LEX_OUT) : $(LEX_FILE)
+	$(LEX) --header-file=${LEX_OUT_H} -o $(LEX_OUT_C) $(LEX_FILE)
+
+# 生成语法分析文件 .h & .c
+$(BISON_OUT) : $(BISON_FILE)
+	$(BISON) --defines=$(BISON_OUT_H) -o $(BISON_OUT_C) $(BISON_FILE)
+
+.PHONY: clean
+clean:
+	rm -rf target/* $(TARGET)
