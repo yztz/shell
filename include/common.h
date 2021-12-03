@@ -3,7 +3,8 @@
 
 #define INLINE static inline
 
-
+#define _unused __attribute__((unused))
+#define _constructor __attribute__((constructor))
 
 /*=================color================*/
 /*
@@ -24,5 +25,14 @@ bg     fg
 #define BLUE COLOR(, 34)
 
 /*==============color end===============*/
+
+#include <stdlib.h>
+INLINE void safe_free(void **p) {
+    if(p == NULL || *p == NULL) return;
+    free(*p);
+    *p = NULL;
+}
+#define sfree(p) safe_free((void **)p)
+
 
 #endif

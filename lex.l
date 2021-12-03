@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "err.h"
 
 #define TOKEN(token) {return token;}
 #define EMPTY() { /* empty */ }
@@ -32,7 +33,9 @@
                         return ID;
                     }
 "&"                 TOKEN(AMPERSAND)
-.                   TOKEN(BAD_TOKEN)
+.                   {
+                        error("bad token: %s", yytext);
+                    }
 
 
 %%

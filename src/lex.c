@@ -454,11 +454,12 @@ char *yytext;
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "err.h"
 
 #define TOKEN(token) {return token;}
 #define EMPTY() { /* empty */ }
-#line 461 "src/lex.c"
 #line 462 "src/lex.c"
+#line 463 "src/lex.c"
 
 #define INITIAL 0
 
@@ -675,10 +676,10 @@ YY_DECL
 		}
 
 	{
-#line 13 "lex.l"
+#line 14 "lex.l"
 
 
-#line 682 "src/lex.c"
+#line 683 "src/lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -738,37 +739,37 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 15 "lex.l"
+#line 16 "lex.l"
 TOKEN(NEWLINE)
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 16 "lex.l"
+#line 17 "lex.l"
 TOKEN(SIMECOLON)
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 17 "lex.l"
+#line 18 "lex.l"
 EMPTY()
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 18 "lex.l"
+#line 19 "lex.l"
 TOKEN(GREATER)
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 19 "lex.l"
+#line 20 "lex.l"
 TOKEN(LESS)
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 20 "lex.l"
+#line 21 "lex.l"
 TOKEN(PIPE)      
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 21 "lex.l"
+#line 22 "lex.l"
 {
                         // printf("%s\n", yytext);
                         yylval.str = strdup(yytext);
@@ -777,7 +778,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 26 "lex.l"
+#line 27 "lex.l"
 {
                         int len = strlen(yytext);
                         char *dup = (char *)malloc(len);
@@ -789,20 +790,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "lex.l"
+#line 35 "lex.l"
 TOKEN(AMPERSAND)
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "lex.l"
-TOKEN(BAD_TOKEN)
+#line 36 "lex.l"
+{
+                        error("bad token: %s", yytext);
+                    }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 38 "lex.l"
+#line 41 "lex.l"
 ECHO;
 	YY_BREAK
-#line 806 "src/lex.c"
+#line 809 "src/lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1807,7 +1810,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 38 "lex.l"
+#line 41 "lex.l"
 
 
 

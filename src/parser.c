@@ -71,6 +71,7 @@
 
 #include <stdio.h>
 #include "job.h"
+#include "err.h"
 
 extern int yylex();
 extern int yyparse();
@@ -80,7 +81,7 @@ job_t current_job = NULL;
 proc_t current_proc = NULL;
     
 
-#line 84 "src/parser.c"
+#line 85 "src/parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -451,9 +452,9 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  15
+#define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   23
+#define YYLAST   22
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  12
@@ -462,7 +463,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  21
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  30
+#define YYNSTATES  29
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   265
@@ -512,9 +513,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    26,    26,    39,    45,    46,    48,    50,    51,    53,
-      54,    55,    57,    58,    60,    61,    63,    64,    66,    67,
-      69,    70
+       0,    27,    27,    41,    46,    47,    49,    55,    56,    58,
+      59,    60,    62,    63,    65,    66,    70,    71,    73,    74,
+      81,    82
 };
 #endif
 
@@ -554,7 +555,7 @@ static const yytype_int16 yytoknum[] =
 };
 #endif
 
-#define YYPACT_NINF (-9)
+#define YYPACT_NINF (-7)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -568,9 +569,9 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       4,    -9,    -9,    -9,    -8,    -9,     2,    -9,    -9,     0,
-      -9,    -9,    -8,     5,     1,    -9,    -9,    -9,    -9,    -9,
-       6,     7,    14,    -9,    -6,    -9,    -9,     9,    -9,    -9
+       4,    -7,    -7,    -7,    -7,    -7,    -4,    -7,    -7,     0,
+      -2,     5,     1,    -7,    -7,    -7,    -7,    -7,    -7,     6,
+       7,    14,    -7,    -6,    -7,    -7,     9,    -7,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -578,22 +579,22 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    16,    17,     2,     0,     7,    12,    18,    20,     0,
-       3,     4,     6,     0,    14,     1,    21,     5,     8,    15,
-       0,     0,     0,    13,     0,    10,     9,     0,    19,    11
+       0,    16,    17,     2,     4,     7,    12,    18,    20,     0,
+       6,     0,    14,     1,    21,     3,     5,     8,    15,     0,
+       0,     0,    13,     0,    10,     9,     0,    19,    11
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -9,    -9,     8,    -9,    10,    -9,    -9,    -9,    -9,    -3,
-      13,    -9
+      -7,    -7,    -7,    -7,    10,    -7,    -7,    -7,    -7,    -3,
+      13,    -7
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,    11,    12,     5,     6,    23,    14,    24,     7,
+       0,     4,    16,    10,     5,     6,    22,    12,    23,     7,
        8,     9
 };
 
@@ -602,16 +603,16 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      15,     1,    10,     2,    19,    20,    21,     1,    13,     2,
-       3,     1,    22,     2,     3,     3,    25,    26,    27,    29,
-      17,    28,    16,    18
+      13,     1,    11,     2,    18,    19,    20,     1,    15,     2,
+       3,     1,    21,     2,     3,     3,    24,    25,    26,    28,
+      27,    17,    14
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     7,    10,     9,     3,     4,     5,     7,     6,     9,
+       0,     7,     6,     9,     3,     4,     5,     7,    10,     9,
       10,     7,    11,     9,    10,    10,    10,    10,     4,    10,
-      12,    24,     9,    13
+      23,    11,     9
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -619,8 +620,8 @@ static const yytype_int8 yycheck[] =
 static const yytype_int8 yystos[] =
 {
        0,     7,     9,    10,    13,    16,    17,    21,    22,    23,
-      10,    14,    15,     6,    19,     0,    22,    14,    16,     3,
-       4,     5,    11,    18,    20,    10,    10,     4,    21,    10
+      15,     6,    19,     0,    22,    10,    14,    16,     3,     4,
+       5,    11,    18,    20,    10,    10,     4,    21,    10
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -634,7 +635,7 @@ static const yytype_int8 yyr1[] =
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     1,     2,     2,     1,     3,     2,
+       0,     2,     1,     1,     0,     2,     2,     1,     3,     2,
        2,     3,     0,     2,     0,     1,     1,     1,     1,     4,
        1,     2
 };
@@ -1104,130 +1105,141 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* cmd: ID  */
-#line 26 "bison.y"
+#line 27 "bison.y"
         {
             if (current_job == NULL) {
                 current_job = create_job();
             }
 
             if (current_proc == NULL) {
+                // debug("gen new proc...");
                 current_proc = create_process();
             }
 
-            process_add_arg(current_proc, yylval.str);
+            process_add_arg(current_proc, (yyvsp[0].str));
         
         }
-#line 1121 "src/parser.c"
+#line 1123 "src/parser.c"
     break;
 
   case 3: /* arg: ID  */
-#line 39 "bison.y"
+#line 41 "bison.y"
         {   
-            printf("%s\n", yylval.str);
-            printf("%d\n", yylval.str == (yyvsp[0].str));
+            // debug("arg: %s", $1);
             process_add_arg(current_proc, (yyvsp[0].str));
         }
-#line 1131 "src/parser.c"
+#line 1132 "src/parser.c"
     break;
 
-  case 4: /* arg_list: arg  */
-#line 45 "bison.y"
+  case 4: /* arg_list: %empty  */
+#line 46 "bison.y"
                         {}
-#line 1137 "src/parser.c"
+#line 1138 "src/parser.c"
     break;
 
   case 5: /* arg_list: arg_list arg  */
-#line 46 "bison.y"
+#line 47 "bison.y"
                         {}
-#line 1143 "src/parser.c"
+#line 1144 "src/parser.c"
     break;
 
   case 6: /* simple_command: cmd arg_list  */
-#line 48 "bison.y"
-                             {}
-#line 1149 "src/parser.c"
+#line 49 "bison.y"
+                             {
+                                // debug("add process...");
+                                job_add_process(current_job, current_proc);
+                                current_proc = NULL;
+                            }
+#line 1154 "src/parser.c"
     break;
 
   case 7: /* simple_command_list: simple_command  */
-#line 50 "bison.y"
-                                                {}
-#line 1155 "src/parser.c"
+#line 55 "bison.y"
+                                    {}
+#line 1160 "src/parser.c"
     break;
 
   case 8: /* simple_command_list: simple_command_list PIPE simple_command  */
-#line 51 "bison.y"
+#line 56 "bison.y"
                                                 {}
-#line 1161 "src/parser.c"
+#line 1166 "src/parser.c"
     break;
 
   case 9: /* redirection: LESS ID  */
-#line 53 "bison.y"
-                        {}
-#line 1167 "src/parser.c"
+#line 58 "bison.y"
+                        {current_job->in_file = (yyvsp[0].str);}
+#line 1172 "src/parser.c"
     break;
 
   case 10: /* redirection: GREATER ID  */
-#line 54 "bison.y"
-                          {}
-#line 1173 "src/parser.c"
+#line 59 "bison.y"
+                          {current_job->out_file = (yyvsp[0].str);}
+#line 1178 "src/parser.c"
     break;
 
   case 11: /* redirection: '2' GREATER ID  */
-#line 55 "bison.y"
-                          {}
-#line 1179 "src/parser.c"
+#line 60 "bison.y"
+                          {current_job->err_file = (yyvsp[0].str);}
+#line 1184 "src/parser.c"
     break;
 
   case 13: /* redirection_list: redirection_list redirection  */
-#line 58 "bison.y"
+#line 63 "bison.y"
                                     {}
-#line 1185 "src/parser.c"
+#line 1190 "src/parser.c"
     break;
 
   case 15: /* background: AMPERSAND  */
-#line 61 "bison.y"
-                {}
-#line 1191 "src/parser.c"
+#line 66 "bison.y"
+                {
+        current_job->fg = 0;
+    }
+#line 1198 "src/parser.c"
     break;
 
   case 16: /* terminator: NEWLINE  */
-#line 63 "bison.y"
+#line 70 "bison.y"
                         {}
-#line 1197 "src/parser.c"
+#line 1204 "src/parser.c"
     break;
 
   case 17: /* terminator: SIMECOLON  */
-#line 64 "bison.y"
+#line 71 "bison.y"
                         {}
-#line 1203 "src/parser.c"
+#line 1210 "src/parser.c"
     break;
 
   case 18: /* pipeline: terminator  */
-#line 66 "bison.y"
+#line 73 "bison.y"
                         {}
-#line 1209 "src/parser.c"
+#line 1216 "src/parser.c"
     break;
 
   case 19: /* pipeline: simple_command_list redirection_list background terminator  */
-#line 67 "bison.y"
-                                                                    {}
-#line 1215 "src/parser.c"
-    break;
-
-  case 20: /* pipeline_list: pipeline  */
-#line 69 "bison.y"
-                                {}
-#line 1221 "src/parser.c"
-    break;
-
-  case 21: /* pipeline_list: pipeline_list pipeline  */
-#line 70 "bison.y"
-                                {}
+#line 74 "bison.y"
+                                                                    {
+        debug("start execution");
+        int res = execute_job(current_job);
+        debug("the result of execution is: %d", res);
+        current_job = NULL; // only for test
+    }
 #line 1227 "src/parser.c"
     break;
 
+  case 20: /* pipeline_list: pipeline  */
+#line 81 "bison.y"
+                                {}
+#line 1233 "src/parser.c"
+    break;
 
-#line 1231 "src/parser.c"
+  case 21: /* pipeline_list: pipeline_list pipeline  */
+#line 82 "bison.y"
+                                {}
+#line 1239 "src/parser.c"
+    break;
+
+
+#line 1243 "src/parser.c"
 
       default: break;
     }
@@ -1421,7 +1433,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 73 "bison.y"
+#line 86 "bison.y"
 
 
 void yyerror(char *s) {

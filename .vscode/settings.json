@@ -6,6 +6,10 @@
         "stdlib.h": "c",
         "job.h": "c",
         "signal.h": "c",
-        "stat.h": "c"
+        "stat.h": "c",
+        "wait.h": "c",
+        "string.h": "c",
+        "typeinfo": "c",
+        "err.h": "c"
     }
 }
