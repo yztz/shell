@@ -355,8 +355,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 12
-#define YY_END_OF_BUFFER 13
+#define YY_NUM_RULES 11
+#define YY_END_OF_BUFFER 12
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -366,8 +366,8 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[18] =
     {   0,
-        0,    0,   13,   11,    3,    1,    7,   10,    8,    2,
-        5,    4,    6,    0,    8,    9,    0
+        0,    0,   12,   10,    3,    1,   10,    9,    7,    2,
+        5,    4,    6,    0,    7,    8,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -769,20 +769,15 @@ TOKEN(PIPE)
 case 7:
 YY_RULE_SETUP
 #line 21 "lex.l"
-TOKEN(QUOTE)
-	YY_BREAK
-case 8:
-YY_RULE_SETUP
-#line 22 "lex.l"
 {
                         // printf("%s\n", yytext);
                         yylval.str = strdup(yytext);
                         return ID;
                     }
 	YY_BREAK
-case 9:
+case 8:
 YY_RULE_SETUP
-#line 27 "lex.l"
+#line 26 "lex.l"
 {
                         int len = strlen(yytext);
                         char *dup = (char *)malloc(len);
@@ -792,22 +787,22 @@ YY_RULE_SETUP
                         return ID;
                     }
 	YY_BREAK
+case 9:
+YY_RULE_SETUP
+#line 34 "lex.l"
+TOKEN(AMPERSAND)
+	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 35 "lex.l"
-TOKEN(AMPERSAND)
+TOKEN(BAD_TOKEN)
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "lex.l"
-TOKEN(BAD_TOKEN)
-	YY_BREAK
-case 12:
-YY_RULE_SETUP
-#line 39 "lex.l"
+#line 38 "lex.l"
 ECHO;
 	YY_BREAK
-#line 811 "src/lex.c"
+#line 806 "src/lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1812,7 +1807,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 39 "lex.l"
+#line 38 "lex.l"
 
 
 

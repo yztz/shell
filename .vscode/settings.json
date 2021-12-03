@@ -2,6 +2,10 @@
     "files.associations": {
         "test.h": "c",
         "unistd.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "stdlib.h": "c",
+        "job.h": "c",
+        "signal.h": "c",
+        "stat.h": "c"
     }
 }

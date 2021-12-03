@@ -16,7 +16,7 @@ proc_t current_proc = NULL;
     char * str;
 }
 
-%token<c>   AMPERSAND GREATER LESS PIPE NEWLINE BAD_TOKEN QUOTE SIMECOLON
+%token<c>   AMPERSAND GREATER LESS PIPE NEWLINE BAD_TOKEN SIMECOLON
 %token<str> ID
 %start pipeline_list
 

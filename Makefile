@@ -1,5 +1,7 @@
 CC 				:= gcc
-CFLAGS 			:= -Wall -g
+CFLAGS 			+= -Wall 
+# -DDEBUG 用于测试环境 可以在main中定义
+# CFLAGS  		+= -DDEBUG
 TARGET 			:= example
 
 LEX 			:= flex
@@ -21,7 +23,7 @@ SRC 			:= $(notdir $(wildcard src/*.c test/*.c))
 OBJ			 	:= $(SRC:%.c=%.o)
 INCLUDE_PATH	:= include
 
-CFLAGS			:= ${CFLAGS} -I $(INCLUDE_PATH)
+CFLAGS			+= -I $(INCLUDE_PATH)
 
 
 all: $(LEX_OUT) $(BISON_OUT) $(TARGET)
@@ -44,6 +46,9 @@ $(LEX_OUT) : $(LEX_FILE)
 $(BISON_OUT) : $(BISON_FILE)
 	$(BISON) --defines=$(BISON_OUT_H) -o $(BISON_OUT_C) $(BISON_FILE)
 
-.PHONY: clean
+.PHONY: clean rebuild
 clean:
 	rm -rf target/* $(TARGET)
+rebuild:
+	make clean
+	make all

@@ -18,7 +18,6 @@
 ">"                 TOKEN(GREATER)
 "<"                 TOKEN(LESS)
 "|"                 TOKEN(PIPE)      
-["]                 TOKEN(QUOTE)
 [-_/\.a-zA-Z0-9]+   {
                         // printf("%s\n", yytext);
                         yylval.str = strdup(yytext);

@@ -117,22 +117,21 @@ enum yysymbol_kind_t
   YYSYMBOL_PIPE = 6,                       /* PIPE  */
   YYSYMBOL_NEWLINE = 7,                    /* NEWLINE  */
   YYSYMBOL_BAD_TOKEN = 8,                  /* BAD_TOKEN  */
-  YYSYMBOL_QUOTE = 9,                      /* QUOTE  */
-  YYSYMBOL_SIMECOLON = 10,                 /* SIMECOLON  */
-  YYSYMBOL_ID = 11,                        /* ID  */
-  YYSYMBOL_12_2_ = 12,                     /* '2'  */
-  YYSYMBOL_YYACCEPT = 13,                  /* $accept  */
-  YYSYMBOL_cmd = 14,                       /* cmd  */
-  YYSYMBOL_arg = 15,                       /* arg  */
-  YYSYMBOL_arg_list = 16,                  /* arg_list  */
-  YYSYMBOL_simple_command = 17,            /* simple_command  */
-  YYSYMBOL_simple_command_list = 18,       /* simple_command_list  */
-  YYSYMBOL_redirection = 19,               /* redirection  */
-  YYSYMBOL_redirection_list = 20,          /* redirection_list  */
-  YYSYMBOL_background = 21,                /* background  */
-  YYSYMBOL_terminator = 22,                /* terminator  */
-  YYSYMBOL_pipeline = 23,                  /* pipeline  */
-  YYSYMBOL_pipeline_list = 24              /* pipeline_list  */
+  YYSYMBOL_SIMECOLON = 9,                  /* SIMECOLON  */
+  YYSYMBOL_ID = 10,                        /* ID  */
+  YYSYMBOL_11_2_ = 11,                     /* '2'  */
+  YYSYMBOL_YYACCEPT = 12,                  /* $accept  */
+  YYSYMBOL_cmd = 13,                       /* cmd  */
+  YYSYMBOL_arg = 14,                       /* arg  */
+  YYSYMBOL_arg_list = 15,                  /* arg_list  */
+  YYSYMBOL_simple_command = 16,            /* simple_command  */
+  YYSYMBOL_simple_command_list = 17,       /* simple_command_list  */
+  YYSYMBOL_redirection = 18,               /* redirection  */
+  YYSYMBOL_redirection_list = 19,          /* redirection_list  */
+  YYSYMBOL_background = 20,                /* background  */
+  YYSYMBOL_terminator = 21,                /* terminator  */
+  YYSYMBOL_pipeline = 22,                  /* pipeline  */
+  YYSYMBOL_pipeline_list = 23              /* pipeline_list  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -454,10 +453,10 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  15
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   26
+#define YYLAST   23
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  13
+#define YYNTOKENS  12
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  12
 /* YYNRULES -- Number of rules.  */
@@ -466,7 +465,7 @@ union yyalloc
 #define YYNSTATES  30
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   266
+#define YYMAXUTOK   265
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -485,7 +484,7 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      12,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      11,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -506,7 +505,7 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11
+       5,     6,     7,     8,     9,    10
 };
 
 #if YYDEBUG
@@ -532,8 +531,8 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "AMPERSAND", "GREATER",
-  "LESS", "PIPE", "NEWLINE", "BAD_TOKEN", "QUOTE", "SIMECOLON", "ID",
-  "'2'", "$accept", "cmd", "arg", "arg_list", "simple_command",
+  "LESS", "PIPE", "NEWLINE", "BAD_TOKEN", "SIMECOLON", "ID", "'2'",
+  "$accept", "cmd", "arg", "arg_list", "simple_command",
   "simple_command_list", "redirection", "redirection_list", "background",
   "terminator", "pipeline", "pipeline_list", YY_NULLPTR
 };
@@ -551,11 +550,11 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 static const yytype_int16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,    50
+     265,    50
 };
 #endif
 
-#define YYPACT_NINF (-11)
+#define YYPACT_NINF (-9)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -569,9 +568,9 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       5,   -11,   -11,   -11,   -10,   -11,    -4,   -11,   -11,     0,
-     -11,   -11,   -10,    -8,     1,   -11,   -11,   -11,   -11,   -11,
-      -3,    -2,    14,   -11,     7,   -11,   -11,     8,   -11,   -11
+       4,    -9,    -9,    -9,    -8,    -9,     2,    -9,    -9,     0,
+      -9,    -9,    -8,     5,     1,    -9,    -9,    -9,    -9,    -9,
+       6,     7,    14,    -9,    -6,    -9,    -9,     9,    -9,    -9
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -587,8 +586,8 @@ static const yytype_int8 yydefact[] =
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -11,   -11,     9,   -11,    10,   -11,   -11,   -11,   -11,     2,
-      11,   -11
+      -9,    -9,     8,    -9,    10,    -9,    -9,    -9,    -9,    -3,
+      13,    -9
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -603,33 +602,33 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      15,    10,    13,     3,    19,    20,    21,     1,    25,    26,
-       2,     3,     1,    22,     1,     2,     3,     2,    27,    29,
-      16,    17,     0,    18,     0,     0,    28
+      15,     1,    10,     2,    19,    20,    21,     1,    13,     2,
+       3,     1,    22,     2,     3,     3,    25,    26,    27,    29,
+      17,    28,    16,    18
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,    11,     6,    11,     3,     4,     5,     7,    11,    11,
-      10,    11,     7,    12,     7,    10,    11,    10,     4,    11,
-       9,    12,    -1,    13,    -1,    -1,    24
+       0,     7,    10,     9,     3,     4,     5,     7,     6,     9,
+      10,     7,    11,     9,    10,    10,    10,    10,     4,    10,
+      12,    24,     9,    13
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     7,    10,    11,    14,    17,    18,    22,    23,    24,
-      11,    15,    16,     6,    20,     0,    23,    15,    17,     3,
-       4,     5,    12,    19,    21,    11,    11,     4,    22,    11
+       0,     7,     9,    10,    13,    16,    17,    21,    22,    23,
+      10,    14,    15,     6,    19,     0,    22,    14,    16,     3,
+       4,     5,    11,    18,    20,    10,    10,     4,    21,    10
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    13,    14,    15,    16,    16,    17,    18,    18,    19,
-      19,    19,    20,    20,    21,    21,    22,    22,    23,    23,
-      24,    24
+       0,    12,    13,    14,    15,    15,    16,    17,    17,    18,
+      18,    18,    19,    19,    20,    20,    21,    21,    22,    22,
+      23,    23
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -1118,7 +1117,7 @@ yyreduce:
             process_add_arg(current_proc, yylval.str);
         
         }
-#line 1122 "src/parser.c"
+#line 1121 "src/parser.c"
     break;
 
   case 3: /* arg: ID  */
@@ -1128,107 +1127,107 @@ yyreduce:
             printf("%d\n", yylval.str == (yyvsp[0].str));
             process_add_arg(current_proc, (yyvsp[0].str));
         }
-#line 1132 "src/parser.c"
+#line 1131 "src/parser.c"
     break;
 
   case 4: /* arg_list: arg  */
 #line 45 "bison.y"
                         {}
-#line 1138 "src/parser.c"
+#line 1137 "src/parser.c"
     break;
 
   case 5: /* arg_list: arg_list arg  */
 #line 46 "bison.y"
                         {}
-#line 1144 "src/parser.c"
+#line 1143 "src/parser.c"
     break;
 
   case 6: /* simple_command: cmd arg_list  */
 #line 48 "bison.y"
                              {}
-#line 1150 "src/parser.c"
+#line 1149 "src/parser.c"
     break;
 
   case 7: /* simple_command_list: simple_command  */
 #line 50 "bison.y"
                                                 {}
-#line 1156 "src/parser.c"
+#line 1155 "src/parser.c"
     break;
 
   case 8: /* simple_command_list: simple_command_list PIPE simple_command  */
 #line 51 "bison.y"
                                                 {}
-#line 1162 "src/parser.c"
+#line 1161 "src/parser.c"
     break;
 
   case 9: /* redirection: LESS ID  */
 #line 53 "bison.y"
                         {}
-#line 1168 "src/parser.c"
+#line 1167 "src/parser.c"
     break;
 
   case 10: /* redirection: GREATER ID  */
 #line 54 "bison.y"
                           {}
-#line 1174 "src/parser.c"
+#line 1173 "src/parser.c"
     break;
 
   case 11: /* redirection: '2' GREATER ID  */
 #line 55 "bison.y"
                           {}
-#line 1180 "src/parser.c"
+#line 1179 "src/parser.c"
     break;
 
   case 13: /* redirection_list: redirection_list redirection  */
 #line 58 "bison.y"
                                     {}
-#line 1186 "src/parser.c"
+#line 1185 "src/parser.c"
     break;
 
   case 15: /* background: AMPERSAND  */
 #line 61 "bison.y"
                 {}
-#line 1192 "src/parser.c"
+#line 1191 "src/parser.c"
     break;
 
   case 16: /* terminator: NEWLINE  */
 #line 63 "bison.y"
                         {}
-#line 1198 "src/parser.c"
+#line 1197 "src/parser.c"
     break;
 
   case 17: /* terminator: SIMECOLON  */
 #line 64 "bison.y"
                         {}
-#line 1204 "src/parser.c"
+#line 1203 "src/parser.c"
     break;
 
   case 18: /* pipeline: terminator  */
 #line 66 "bison.y"
                         {}
-#line 1210 "src/parser.c"
+#line 1209 "src/parser.c"
     break;
 
   case 19: /* pipeline: simple_command_list redirection_list background terminator  */
 #line 67 "bison.y"
                                                                     {}
-#line 1216 "src/parser.c"
+#line 1215 "src/parser.c"
     break;
 
   case 20: /* pipeline_list: pipeline  */
 #line 69 "bison.y"
                                 {}
-#line 1222 "src/parser.c"
+#line 1221 "src/parser.c"
     break;
 
   case 21: /* pipeline_list: pipeline_list pipeline  */
 #line 70 "bison.y"
                                 {}
-#line 1228 "src/parser.c"
+#line 1227 "src/parser.c"
     break;
 
 
-#line 1232 "src/parser.c"
+#line 1231 "src/parser.c"
 
       default: break;
     }

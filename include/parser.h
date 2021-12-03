@@ -60,9 +60,8 @@ extern int yydebug;
     PIPE = 261,                    /* PIPE  */
     NEWLINE = 262,                 /* NEWLINE  */
     BAD_TOKEN = 263,               /* BAD_TOKEN  */
-    QUOTE = 264,                   /* QUOTE  */
-    SIMECOLON = 265,               /* SIMECOLON  */
-    ID = 266                       /* ID  */
+    SIMECOLON = 264,               /* SIMECOLON  */
+    ID = 265                       /* ID  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -76,7 +75,7 @@ union YYSTYPE
     int c;
     char * str;
 
-#line 80 "include/parser.h"
+#line 79 "include/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
