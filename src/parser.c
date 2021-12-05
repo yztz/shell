@@ -69,7 +69,6 @@
 /* First part of user prologue.  */
 #line 1 "bison.y"
 
-#include <stdio.h>
 #include "job.h"
 #include "err.h"
 
@@ -77,11 +76,17 @@ extern int yylex();
 extern int yyparse();
 extern void yyerror(char *);
 
+#define COMMAND_INIT_SIZE 1024
+int command_size = 0;
+static char *command = NULL;
+
+void append(const char *token);
+
 job_t current_job = NULL;
 proc_t current_proc = NULL;
     
 
-#line 85 "src/parser.c"
+#line 90 "src/parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -126,13 +131,14 @@ enum yysymbol_kind_t
   YYSYMBOL_arg = 14,                       /* arg  */
   YYSYMBOL_arg_list = 15,                  /* arg_list  */
   YYSYMBOL_simple_command = 16,            /* simple_command  */
-  YYSYMBOL_simple_command_list = 17,       /* simple_command_list  */
-  YYSYMBOL_redirection = 18,               /* redirection  */
-  YYSYMBOL_redirection_list = 19,          /* redirection_list  */
-  YYSYMBOL_background = 20,                /* background  */
-  YYSYMBOL_terminator = 21,                /* terminator  */
-  YYSYMBOL_pipeline = 22,                  /* pipeline  */
-  YYSYMBOL_pipeline_list = 23              /* pipeline_list  */
+  YYSYMBOL_pipe = 17,                      /* pipe  */
+  YYSYMBOL_simple_command_list = 18,       /* simple_command_list  */
+  YYSYMBOL_redirection = 19,               /* redirection  */
+  YYSYMBOL_redirection_list = 20,          /* redirection_list  */
+  YYSYMBOL_background = 21,                /* background  */
+  YYSYMBOL_terminator = 22,                /* terminator  */
+  YYSYMBOL_pipeline = 23,                  /* pipeline  */
+  YYSYMBOL_pipeline_list = 24              /* pipeline_list  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -452,18 +458,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  13
+#define YYFINAL  14
 /* YYLAST -- Last index in YYTABLE.  */
 #define YYLAST   22
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  12
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  12
+#define YYNNTS  13
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  21
+#define YYNRULES  22
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  29
+#define YYNSTATES  30
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   265
@@ -513,9 +519,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    27,    27,    41,    46,    47,    49,    55,    56,    58,
-      59,    60,    62,    63,    65,    66,    70,    71,    73,    74,
-      81,    82
+       0,    31,    31,    48,    56,    57,    59,    65,    67,    68,
+      70,    71,    72,    74,    75,    77,    78,    83,    84,    86,
+      87,    89,    97
 };
 #endif
 
@@ -533,7 +539,7 @@ static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "AMPERSAND", "GREATER",
   "LESS", "PIPE", "NEWLINE", "BAD_TOKEN", "SIMECOLON", "ID", "'2'",
-  "$accept", "cmd", "arg", "arg_list", "simple_command",
+  "$accept", "cmd", "arg", "arg_list", "simple_command", "pipe",
   "simple_command_list", "redirection", "redirection_list", "background",
   "terminator", "pipeline", "pipeline_list", YY_NULLPTR
 };
@@ -570,8 +576,8 @@ static const yytype_int16 yytoknum[] =
 static const yytype_int8 yypact[] =
 {
        4,    -7,    -7,    -7,    -7,    -7,    -4,    -7,    -7,     0,
-      -2,     5,     1,    -7,    -7,    -7,    -7,    -7,    -7,     6,
-       7,    14,    -7,    -6,    -7,    -7,     9,    -7,    -7
+      -2,    -7,     5,     1,    -7,    -7,    -7,    -7,    -7,    -7,
+       6,     7,    14,    -7,    -6,    -7,    -7,     9,    -7,    -7
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -579,23 +585,23 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,    16,    17,     2,     4,     7,    12,    18,    20,     0,
-       6,     0,    14,     1,    21,     3,     5,     8,    15,     0,
-       0,     0,    13,     0,    10,     9,     0,    19,    11
+       0,    17,    18,     2,     4,     8,    13,    19,    21,     0,
+       6,     7,     0,    15,     1,    22,     3,     5,     9,    16,
+       0,     0,     0,    14,     0,    11,    10,     0,    20,    12
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,    -7,    -7,    10,    -7,    -7,    -7,    -7,    -3,
-      13,    -7
+      -7,    -7,    -7,    -7,     8,    -7,    -7,    -7,    -7,    -7,
+      -3,    13,    -7
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,    16,    10,     5,     6,    22,    12,    23,     7,
-       8,     9
+       0,     4,    17,    10,     5,    12,     6,    23,    13,    24,
+       7,     8,     9
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -603,41 +609,41 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      13,     1,    11,     2,    18,    19,    20,     1,    15,     2,
-       3,     1,    21,     2,     3,     3,    24,    25,    26,    28,
-      27,    17,    14
+      14,     1,    11,     2,    19,    20,    21,     1,    16,     2,
+       3,     1,    22,     2,     3,     3,    25,    26,    27,    29,
+      18,    28,    15
 };
 
 static const yytype_int8 yycheck[] =
 {
        0,     7,     6,     9,     3,     4,     5,     7,    10,     9,
       10,     7,    11,     9,    10,    10,    10,    10,     4,    10,
-      23,    11,     9
+      12,    24,     9
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     7,     9,    10,    13,    16,    17,    21,    22,    23,
-      15,     6,    19,     0,    22,    10,    14,    16,     3,     4,
-       5,    11,    18,    20,    10,    10,     4,    21,    10
+       0,     7,     9,    10,    13,    16,    18,    22,    23,    24,
+      15,     6,    17,    20,     0,    23,    10,    14,    16,     3,
+       4,     5,    11,    19,    21,    10,    10,     4,    22,    10
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    12,    13,    14,    15,    15,    16,    17,    17,    18,
-      18,    18,    19,    19,    20,    20,    21,    21,    22,    22,
-      23,    23
+       0,    12,    13,    14,    15,    15,    16,    17,    18,    18,
+      19,    19,    19,    20,    20,    21,    21,    22,    22,    23,
+      23,    24,    24
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     0,     2,     2,     1,     3,     2,
-       2,     3,     0,     2,     0,     1,     1,     1,     1,     4,
-       1,     2
+       0,     2,     1,     1,     0,     2,     2,     1,     1,     3,
+       2,     2,     3,     0,     2,     0,     1,     1,     1,     1,
+       4,     1,     2
 };
 
 
@@ -1105,10 +1111,11 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* cmd: ID  */
-#line 27 "bison.y"
+#line 31 "bison.y"
         {
             if (current_job == NULL) {
                 current_job = create_job();
+                sfree(&command);
             }
 
             if (current_proc == NULL) {
@@ -1116,130 +1123,144 @@ yyreduce:
                 current_proc = create_process();
             }
 
-            process_add_arg(current_proc, (yyvsp[0].str));
-        
-        }
-#line 1123 "src/parser.c"
-    break;
+            process_add_arg(current_proc, strdup((yyvsp[0].str)));
+            append((yyvsp[0].str));
 
-  case 3: /* arg: ID  */
-#line 41 "bison.y"
-        {   
-            // debug("arg: %s", $1);
-            process_add_arg(current_proc, (yyvsp[0].str));
+            free((yyvsp[0].str));
         }
 #line 1132 "src/parser.c"
     break;
 
-  case 4: /* arg_list: %empty  */
-#line 46 "bison.y"
-                        {}
-#line 1138 "src/parser.c"
-    break;
+  case 3: /* arg: ID  */
+#line 48 "bison.y"
+        {   
+            // debug("arg: %s", $1);
+            process_add_arg(current_proc, strdup((yyvsp[0].str)));
+            append((yyvsp[0].str));
 
-  case 5: /* arg_list: arg_list arg  */
-#line 47 "bison.y"
-                        {}
+            free((yyvsp[0].str));
+        }
 #line 1144 "src/parser.c"
     break;
 
+  case 4: /* arg_list: %empty  */
+#line 56 "bison.y"
+                        {}
+#line 1150 "src/parser.c"
+    break;
+
+  case 5: /* arg_list: arg_list arg  */
+#line 57 "bison.y"
+                        {}
+#line 1156 "src/parser.c"
+    break;
+
   case 6: /* simple_command: cmd arg_list  */
-#line 49 "bison.y"
+#line 59 "bison.y"
                              {
                                 // debug("add process...");
                                 job_add_process(current_job, current_proc);
                                 current_proc = NULL;
                             }
-#line 1154 "src/parser.c"
-    break;
-
-  case 7: /* simple_command_list: simple_command  */
-#line 55 "bison.y"
-                                    {}
-#line 1160 "src/parser.c"
-    break;
-
-  case 8: /* simple_command_list: simple_command_list PIPE simple_command  */
-#line 56 "bison.y"
-                                                {}
 #line 1166 "src/parser.c"
     break;
 
-  case 9: /* redirection: LESS ID  */
-#line 58 "bison.y"
-                        {current_job->in_file = (yyvsp[0].str);}
+  case 7: /* pipe: PIPE  */
+#line 65 "bison.y"
+           {append("|");}
 #line 1172 "src/parser.c"
     break;
 
-  case 10: /* redirection: GREATER ID  */
-#line 59 "bison.y"
-                          {current_job->out_file = (yyvsp[0].str);}
+  case 8: /* simple_command_list: simple_command  */
+#line 67 "bison.y"
+                                    {}
 #line 1178 "src/parser.c"
     break;
 
-  case 11: /* redirection: '2' GREATER ID  */
-#line 60 "bison.y"
-                          {current_job->err_file = (yyvsp[0].str);}
+  case 9: /* simple_command_list: simple_command_list pipe simple_command  */
+#line 68 "bison.y"
+                                              {}
 #line 1184 "src/parser.c"
     break;
 
-  case 13: /* redirection_list: redirection_list redirection  */
-#line 63 "bison.y"
-                                    {}
+  case 10: /* redirection: LESS ID  */
+#line 70 "bison.y"
+                        {current_job->in_file = strdup((yyvsp[0].str));append("<");append((yyvsp[0].str));free((yyvsp[0].str));}
 #line 1190 "src/parser.c"
     break;
 
-  case 15: /* background: AMPERSAND  */
-#line 66 "bison.y"
+  case 11: /* redirection: GREATER ID  */
+#line 71 "bison.y"
+                          {current_job->out_file = strdup((yyvsp[0].str));append(">");append((yyvsp[0].str));free((yyvsp[0].str));}
+#line 1196 "src/parser.c"
+    break;
+
+  case 12: /* redirection: '2' GREATER ID  */
+#line 72 "bison.y"
+                          {current_job->err_file = strdup((yyvsp[0].str));append("2>");append((yyvsp[0].str));free((yyvsp[0].str));}
+#line 1202 "src/parser.c"
+    break;
+
+  case 14: /* redirection_list: redirection_list redirection  */
+#line 75 "bison.y"
+                                    {}
+#line 1208 "src/parser.c"
+    break;
+
+  case 16: /* background: AMPERSAND  */
+#line 78 "bison.y"
                 {
         current_job->fg = 0;
+        append("&");
     }
-#line 1198 "src/parser.c"
+#line 1217 "src/parser.c"
     break;
 
-  case 16: /* terminator: NEWLINE  */
-#line 70 "bison.y"
+  case 17: /* terminator: NEWLINE  */
+#line 83 "bison.y"
                         {}
-#line 1204 "src/parser.c"
+#line 1223 "src/parser.c"
     break;
 
-  case 17: /* terminator: SIMECOLON  */
-#line 71 "bison.y"
+  case 18: /* terminator: SIMECOLON  */
+#line 84 "bison.y"
                         {}
-#line 1210 "src/parser.c"
+#line 1229 "src/parser.c"
     break;
 
-  case 18: /* pipeline: terminator  */
-#line 73 "bison.y"
+  case 19: /* pipeline: terminator  */
+#line 86 "bison.y"
                         {}
-#line 1216 "src/parser.c"
+#line 1235 "src/parser.c"
     break;
 
-  case 19: /* pipeline: simple_command_list redirection_list background terminator  */
-#line 74 "bison.y"
-                                                                    {
-        debug("start execution");
-        int res = execute_job(current_job);
-        debug("the result of execution is: %d", res);
-        current_job = NULL; // only for test
-    }
-#line 1227 "src/parser.c"
+  case 20: /* pipeline: simple_command_list redirection_list background terminator  */
+#line 87 "bison.y"
+                                                                    {}
+#line 1241 "src/parser.c"
     break;
 
-  case 20: /* pipeline_list: pipeline  */
-#line 81 "bison.y"
+  case 21: /* pipeline_list: pipeline  */
+#line 89 "bison.y"
+                        {
+                    current_job->command = strdup(command);
+                    debug("command: %s", command);
+                    debug("start execution");
+                    int res = execute_job(current_job);
+                    debug("the result of execution is: %d", res);
+                    current_job = NULL;
+                }
+#line 1254 "src/parser.c"
+    break;
+
+  case 22: /* pipeline_list: pipeline_list pipeline  */
+#line 97 "bison.y"
                                 {}
-#line 1233 "src/parser.c"
-    break;
-
-  case 21: /* pipeline_list: pipeline_list pipeline  */
-#line 82 "bison.y"
-                                {}
-#line 1239 "src/parser.c"
+#line 1260 "src/parser.c"
     break;
 
 
-#line 1243 "src/parser.c"
+#line 1264 "src/parser.c"
 
       default: break;
     }
@@ -1433,9 +1454,43 @@ yyreturn:
   return yyresult;
 }
 
-#line 86 "bison.y"
+#line 101 "bison.y"
 
 
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
+    /* free_job(current_job);
+    free_process(current_proc);
+    current_job = NULL;
+    current_proc = NULL;
+    sfree(&command); */
+}
+
+void append(const char *token) {
+    if(!token) return;
+    char *new_command;
+    int token_len = strlen(token);
+    if (token_len == 0) return;
+
+    if (!command) {
+        command_size = max(token_len + 1, COMMAND_INIT_SIZE);
+        command = (char *)malloc(command_size);
+        if (!command) panic("memory alloc failure");
+        strcpy(command, token);
+        return;
+    }
+
+    int old_len = strlen(command);
+    int new_len = old_len + token_len + 2;  //+1 '\0' + 1空格分割
+    if (new_len > command_size) {
+        while (command_size < new_len) command_size *= 2;
+        new_command = (char *)malloc(command_size);
+        if (!new_command) panic("memory alloc failure");
+        strcpy(new_command, command);
+        free(command);
+        command = new_command;
+    }
+    *(command + old_len) = ' ';
+    strcpy(command + old_len + 1, token);
+
 }

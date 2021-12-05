@@ -16,15 +16,18 @@ extern int terminal;
 extern pid_t pgid;
 extern struct termios terminal_flag;
 
-static struct job job_list_head;
+struct job job_list_head;
+int next_id = 1;
 
 INLINE void _init_proc(proc_t process) {
-    process->status = WAITING;
+    process->status = 0;
+    set_status(process->status, WAITING);
     process->argc = 0;
     process->pid = -1;
 }
 
 INLINE void _init_job(job_t job) {
+    job->id = next_id++;
     job->next = NULL;
     job->pgid = 0;
     job->in_file = NULL;
@@ -75,6 +78,7 @@ int process_add_arg(proc_t process, char* arg) {
     }
 
     process->args[process->argc++] = arg;
+    process->args[process->argc] = NULL;
 
     return 0;
 }
@@ -143,61 +147,64 @@ int execute_job(job_t job) {
 
         proc_t process = job->processes[i];
         builtin_func bf = NULL;
+        /*
+            如果是指令类命令，直接执行，但是对于管道连接情况下没有仔细考虑
+        */
         if ((bf = find_cmd(process->args[0]))) {
-            // todo:
             int ret = bf(process, in_file, out_file, err_file);
-            process->status = COMPLETED;
+            set_status(process->status, COMPLETED);
 
             if (ret == -1)
-                return -1;
+                goto err;
         } else {
             if ((pid = fork()) == -1) {
                 error("fork fail");
                 goto err;
             }
             if (pid == 0) {  // child
-                // todo:
                 execute_process(process, job->pgid, in_file, out_file, err_file,
                                 job->fg);
             } else {  // parent
                 process->pid = pid;
-                process->status = RUNNING;
+                set_status(process->status, RUNNING);
                 if (!job->pgid) {
                     job->pgid = pid;
                 }
             }
-            /*
-            为什么这里需要关闭？
-            因为先前执行了一遍fork，相关数据结构已经是duplicated了
-            */
-            if (in_file > 2 && close(in_file) == -1) {
-                error("fail to close in_file");
-                goto err;
-            }
-            if (out_file > 2 && close(out_file) == -1) {
-                error("fail to close out_file");
-                goto err;
-            }
-            if (err_file > 2 && close(err_file) == -1) {
-                error("fail to close err_file");
-                goto err;
-            }
         }
+
+        /*
+        为什么这里需要关闭？
+        1. 对于执行子进程
+        因为先前执行了一遍fork，子进程与父进程的相关文件描述符都指向了统一内核文件句柄，
+        这里进行关闭是为了触发引用的解除，为了后期资源的回收
+        2. 对于内建指令
+        顺序执行完毕，意味着资源需要被回收
+        */
+        if (in_file > 2 && close(in_file) == -1) {
+            error("fail to close in_file");
+            goto err;
+        }
+        if (out_file > 2 && close(out_file) == -1) {
+            error("fail to close out_file");
+            goto err;
+        }
+        if (err_file > 2 && close(err_file) == -1) {
+            error("fail to close err_file");
+            goto err;
+        }
+
         in_file = fd[0];
     }
-
     add_to_jobs(job);
 
     if (job->fg) {
         put_job_fg(job);
-    } else {
-        // todo:
     }
-
+    collect_completed_jobs();
     return 0;
 
 err:
-    error("something wrong happened...");
     if (fd[0] > 2)
         close(fd[0]);
     if (fd[1] > 2)
@@ -241,10 +248,14 @@ void free_job(job_t job) {
     sfree(&job->in_file);
     sfree(&job->out_file);
     sfree(&job->err_file);
+    sfree(&job->command);
     // 释放进程
     for (size_t i = 0; i < job->process_num; i++) {
-        free_process(job->processes[i]);
-        sfree(&job->processes[i]);
+        proc_t proc = job->processes[i];
+        if (!is_completed(proc->status) && !is_waiting(proc->status)) error("process has not stopped!");
+        free_process(proc);
+        // free(job->processes[i]);
+        sfree(&(job->processes[i]));
     }
 }
 
@@ -259,17 +270,19 @@ void free_process(proc_t proc) {
 
 int job_is_completed(job_t job) {
     for (size_t i = 0; i < job->process_num; i++) {
-        if (job->processes[i]->status != COMPLETED)
+        int status = job->processes[i]->status;
+        if (!is_completed(status))
             return 0;
     }
     return 1;
 }
 int job_is_stopped(job_t job) {
     for (size_t i = 0; i < job->process_num; i++) {
-        if (job->processes[i]->status == STOPPED)
-            return 1;
+        int status = job->processes[i]->status;
+        if (!is_completed(status) && !is_stopped(status))
+            return 0;
     }
-    return 0;
+    return 1;
 }
 
 int change_proc_status(pid_t pid, int status) {
@@ -285,13 +298,12 @@ int change_proc_status(pid_t pid, int status) {
             proc = job->processes[i];
             if (proc->pid == pid) {
                 if (WIFSTOPPED(status)) {
-                    debug("%d: STOPPED", pid);
-                    proc->status = STOPPED;
+                    if(job->fg) umsg("pid %d: STOPPED", pid);
+                    set_status(proc->status, STOPPED);
                 } else {
-                    proc->status = COMPLETED;
+                    set_status(proc->status, COMPLETED);
                     if (WIFSIGNALED(status)) {
-                        // todo:
-                        error("%d is terminated by signal %d", pid,
+                        umsg("pid %d is terminated by signal %d", pid,
                               WTERMSIG(status));
                     }
                 }
@@ -304,6 +316,14 @@ int change_proc_status(pid_t pid, int status) {
     return -1;
 }
 
+void update_status() {
+    int status;
+    pid_t pid;
+    do {
+        pid = waitpid(-1, &status, WUNTRACED | WNOHANG);
+    } while(!change_proc_status(pid, status));
+}
+
 void put_job_fg(job_t job) {
     job->fg = 1;
     tcsetpgrp(terminal, job->pgid);
@@ -312,10 +332,20 @@ void put_job_fg(job_t job) {
     wait_job(job);
 
     tcsetpgrp(terminal, pgid);
-    restore_terminal_flag();
+    restore_terminal_flag(&job->terminal_flag);
 }
-void put_job_bg(job_t job) {
 
+void continue_job(job_t job, int foreground) {
+    pid_t pgid = job->pgid;
+    if (kill(-pgid, SIGCONT)) {
+        error("fail to continue the job");
+        return;
+    }
+    for (size_t i = 0; i < job->process_num; i++) {
+        clear_status(job->processes[i]->status, STOPPED);
+    }
+
+    if(foreground) put_job_fg(job);
 }
 
 int execute_process(proc_t process,
@@ -327,9 +357,10 @@ int execute_process(proc_t process,
     pid_t pid = getpid();
     pgid = pgid ? pgid : pid;
     setpgid(pid, pgid);
-    debug("ready to execute %s", process->args[0]);
-    // debug("in_file is: %d", in_file);
-    // debug("out_file is: %d", out_file);
+    debug("ready to execute '%s' (in=%d, out=%d, err=%d)", process->args[0],
+          in_file, out_file, err_file);
+    debug("arg_list:");
+    for (size_t i = 1; i < process->argc; i++) debug("%s", process->args[i]);
 
     // 恢复默认信号处理
     signal(SIGINT, SIG_DFL);
@@ -341,6 +372,10 @@ int execute_process(proc_t process,
         // 这个函数是设置前台进程组，作为后台进程，此举将会导致进程被暂停
         tcsetpgrp(STDIN_FILENO, pgid);
     }
+
+    /*
+        dup2 实现了重定向
+    */
     if (in_file > 2) {
         dup2(in_file, STDIN_FILENO);
         close(in_file);
@@ -354,7 +389,23 @@ int execute_process(proc_t process,
         close(err_file);
     }
     execvp(process->args[0], process->args);
-    panic("fail to execute %s", process->args[0]);
+    umsg("%s command not found", process->args[0]);
 
-    return -1;
+    exit(1);
+}
+
+
+void collect_completed_jobs() {
+    for (job_t prev = &job_list_head, cur = prev->next; cur;) {
+        if (job_is_completed(cur)) {
+            // debug("detect job: %d: '%s' completed， status is: %d", cur->id, cur->command);
+            if (cur->id == next_id - 1) next_id--;
+            prev->next = cur->next;
+            free_job(cur);
+            cur = prev->next;
+        } else {
+            prev = cur;
+            cur = cur->next;
+        }
+    }
 }

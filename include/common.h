@@ -6,8 +6,11 @@
 #define _unused __attribute__((unused))
 #define _constructor __attribute__((constructor))
 
+#define max(a, b) ((a) > (b) ? (a) : (b))
+
 /*=================color================*/
 /*
+\033[显示方式;前景色;背景色m ....... \33[0m
 bg     fg
 40: 黑 30: 黑
 41: 红 31: 红
@@ -17,12 +20,19 @@ bg     fg
 45: 紫 35: 紫
 46: 深绿 36: 深绿
 47: 白色 37: 白色
+
+0                    终端默认设置
+1                    高亮加粗显示
+4                    使用下划线
 */
-#define COLOR(bg, fg) "\033[" #bg ";" #fg "m"
-#define COLOR_CLEAR "\033[0m"
-#define RED COLOR(, 31)
-#define YELLOW COLOR(, 33)
-#define BLUE COLOR(, 34)
+#define ATTR(attr) "\033["#attr"m"
+#define COLOR_CLEAR ATTR(0)
+#define RED ATTR(31)
+#define YELLOW ATTR(33)
+#define BLUE ATTR(34)
+#define WHITE ATTR(37)
+#define GREEN ATTR(32)
+#define BOLD ATTR(1)
 
 /*==============color end===============*/
 

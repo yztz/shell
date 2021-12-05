@@ -1,10 +1,17 @@
 chdir
+
+// exec函数族
 execvp
+...
+
+// 标准输入输出错误
 stdin,out,err
+// 输出相关，各类printf
+https://blog.csdn.net/feather_wch/article/details/50709141
+
 pipe
 fork
 pgid
-vsnprintf
 // linux信号机制(软件中断) 唯一的异步通信机制
 signal 
 // 返回"函数指针"的函数
@@ -28,9 +35,17 @@ waitpid
 // 终端相关
 isatty
 
+// 文件相关
+https://blog.csdn.net/yushuaigee/article/details/107883964#:~:text=Linux%E5%86%85%E6%A0%B8%E5%AF%B9,%E5%BC%80%E7%9A%84%E6%96%87%E4%BB%B6%E7%9A%84%E6%8C%87%E9%92%88%E3%80%82
+lsof | wc -l 文件描述符数目
+/proc/sys/fs/file-nr 句柄用量
+进程级的文件描述符表
+系统级的打开文件描述符表
+文件系统i-node表
+close : https://linux.die.net/man/2/close 
 
-// 我犯得十分愚蠢的错误
-1. open too outsmart myself
+// 十分愚蠢的错误
+1. open: too outsmart myself
 2. string not init ! fuck
 
 /*

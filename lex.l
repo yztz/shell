@@ -24,7 +24,7 @@
                         yylval.str = strdup(yytext);
                         return ID;
                     }
-\"[-_/\.a-zA-Z0-9 ]+\"         {
+\"(\\.|[^"\\])*\"         {
                         int len = strlen(yytext);
                         char *dup = (char *)malloc(len);
                         strncpy(dup, yytext + 1, len - 2);
@@ -34,7 +34,7 @@
                     }
 "&"                 TOKEN(AMPERSAND)
 .                   {
-                        error("bad token: %s", yytext);
+                        error("bad token: %d", *yytext);
                     }
 
 

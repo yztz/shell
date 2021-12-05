@@ -19,20 +19,23 @@ LEX_OUT			:= $(LEX_OUT_H) $(LEX_OUT_C)
 BISON_OUT 		:= $(BISON_OUT_H) $(BISON_OUT_C)
 
 OUT_PATH		:= target
-SRC 			:= $(notdir $(wildcard src/*.c test/*.c))
-OBJ			 	:= $(SRC:%.c=%.o)
+SRC 			:= $(wildcard src/*.c test/*.c) $(wildcard src/builtins/*.c)
+SRC_NO_DIR		:= $(notdir $(SRC))
+OBJ			 	:= $(SRC_NO_DIR:%.c=%.o)
 INCLUDE_PATH	:= include
 
 CFLAGS			+= -I $(INCLUDE_PATH)
-
 
 all: $(LEX_OUT) $(BISON_OUT) $(TARGET)
 
 # 目标生成
 $(TARGET) : $(OBJ:%.o=$(OUT_PATH)/%.o)
-	$(CC) $(CFLAGS) -lfl -o $(TARGET) $^
-
+	$(CC) $(CFLAGS) -o $(TARGET) $^ -lfl -lreadline
+ 
 $(OUT_PATH)/%.o : src/%.c
+	$(CC) ${CFLAGS} -c -o $@ $<
+
+$(OUT_PATH)/%.o : src/builtins/%.c
 	$(CC) ${CFLAGS} -c -o $@ $<
 
 $(OUT_PATH)/%.o : test/%.c

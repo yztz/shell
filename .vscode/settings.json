@@ -10,6 +10,10 @@
         "wait.h": "c",
         "string.h": "c",
         "typeinfo": "c",
-        "err.h": "c"
+        "err.h": "c",
+        "builtin.h": "c",
+        "env.h": "c",
+        "common.h": "c",
+        "readline.h": "c"
     }
 }

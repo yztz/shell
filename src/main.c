@@ -15,17 +15,12 @@ int main() {
 
 void wait_input() {
     shell_init();
-    char buffer[255];
     while(1) {
-        printf("%s $ ", get_dir());
-        scanf("%[^\n]", buffer);
-        getchar();
-        int len = strlen(buffer);
-        buffer[len] = '\n';
-        buffer[len + 1] = '\0';
+        char *line = readln();
         YY_BUFFER_STATE bp;
-        bp = yy_scan_string(buffer);
+        bp = yy_scan_string(line);
         yyparse();
         yy_delete_buffer(bp);
+        free(line);
     }
 }

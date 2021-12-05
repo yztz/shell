@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "job.h"
+#include "err.h"
 
 #define BUILTIN_CMD_MAX_LENGTH 255
 #define MAX_BUILTIN_NUM 255
