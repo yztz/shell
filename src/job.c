@@ -199,7 +199,7 @@ int execute_job(job_t job) {
     add_to_jobs(job);
 
     if (job->fg) {
-        put_job_fg(job);
+        put_job_fg(job, 0);
     }
     collect_completed_jobs();
     return 0;
@@ -324,10 +324,17 @@ void update_status() {
     } while(!change_proc_status(pid, status));
 }
 
-void put_job_fg(job_t job) {
+void put_job_fg(job_t job, int cont) {
     job->fg = 1;
     tcsetpgrp(terminal, job->pgid);
     set_terminal_flag(job->terminal_flag);
+
+    if (cont) {
+        if (kill(-job->pgid, SIGCONT)) {
+            error("fail to continue the job");
+            return;
+        }
+    }
 
     wait_job(job);
 
@@ -335,17 +342,20 @@ void put_job_fg(job_t job) {
     restore_terminal_flag(&job->terminal_flag);
 }
 
-void continue_job(job_t job, int foreground) {
-    pid_t pgid = job->pgid;
-    if (kill(-pgid, SIGCONT)) {
-        error("fail to continue the job");
-        return;
+job_t find_job_by_id(int id) {
+    job_t job;
+    for_each_job(job, &job_list_head) {
+        if (job->id == id) return job;
     }
+    return NULL;
+}
+
+void continue_job(job_t job, int foreground) {
     for (size_t i = 0; i < job->process_num; i++) {
         clear_status(job->processes[i]->status, STOPPED);
     }
 
-    if(foreground) put_job_fg(job);
+    if(foreground) put_job_fg(job, 1);
 }
 
 int execute_process(proc_t process,
@@ -368,10 +378,10 @@ int execute_process(proc_t process,
     signal(SIGTSTP, SIG_DFL);
     signal(SIGTTIN, SIG_DFL);
     signal(SIGTTOU, SIG_DFL);
-    if (fg) {  // todo:
-        // 这个函数是设置前台进程组，作为后台进程，此举将会导致进程被暂停
-        tcsetpgrp(STDIN_FILENO, pgid);
-    }
+    // if (fg) {
+    //     // 这个函数是设置前台进程组，作为后台进程，此举将会导致进程被暂停
+    //     tcsetpgrp(STDIN_FILENO, pgid);
+    // }
 
     /*
         dup2 实现了重定向

@@ -66,8 +66,12 @@ void restore_dir() {
 char * readln() {
     char prompt[512];
     snprintf(prompt, 512, BOLD GREEN "Ysh: "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR, current_dir);
-    char * line = readline(prompt);
-    int len = strlen(line);
+    char * line;
+    int len;
+    do {
+        line = readline(prompt);
+        len = strlen(line);
+    } while (len == 0);
     char *ret = (char *) malloc(len + 1);
     strcpy(ret, line);
     *(ret + len) = '\n';

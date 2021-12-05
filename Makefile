@@ -1,8 +1,8 @@
 CC 				:= gcc
 CFLAGS 			+= -Wall 
-# -DDEBUG 用于测试环境 可以在main中定义
+# -DDEBUG 用于测试环境
 CFLAGS  		+= -DDEBUG -g
-TARGET 			:= shell
+TARGET 			:= ysh
 
 LEX 			:= flex
 BISON 			:= bison

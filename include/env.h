@@ -6,7 +6,7 @@
 #define PATH_LENTH 1024
 #define SHELL_NAME "Ysh"
 // 面向用户的消息
-#define umsg(msg, ...) message(SHELL_NAME, msg, __VA_ARGS__)
+#define umsg(msg, ...) message(SHELL_NAME, msg, ##__VA_ARGS__)
 
 void        shell_init();
 const char* get_dir();

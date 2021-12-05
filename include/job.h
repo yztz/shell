@@ -70,6 +70,7 @@ void    wait_job(job_t job);
 int     change_proc_status(pid_t pid, int status);
 void    update_status();
 void    add_to_jobs(job_t job);
+job_t   find_job_by_id(int id);
 
 int     job_is_completed(job_t job);
 int     job_is_stopped(job_t job);
@@ -77,7 +78,7 @@ int     job_is_stopped(job_t job);
 void    free_job(job_t job);
 void    free_process(proc_t proc);
 
-void    put_job_fg(job_t job);
+void    put_job_fg(job_t job, int contn);
 // void    put_job_bg(job_t job);
 void    continue_job(job_t job, int foreground);
 void    collect_completed_jobs();
