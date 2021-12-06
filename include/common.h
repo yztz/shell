@@ -5,6 +5,7 @@
 
 #define _unused __attribute__((unused))
 #define _constructor __attribute__((constructor))
+#define _noreturn __attribute__((noreturn))
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
@@ -36,13 +37,16 @@ bg     fg
 
 /*==============color end===============*/
 
+/*================memory================*/
 #include <stdlib.h>
+/* 安全释放内存：释放内存并将原指针置为NULL */
 INLINE void safe_free(void **p) {
     if(p == NULL || *p == NULL) return;
     free(*p);
     *p = NULL;
 }
 #define sfree(p) safe_free((void **)p)
+/*======================================*/
 
 
 #endif
