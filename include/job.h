@@ -121,7 +121,7 @@ int     job_is_completed(job_t job);
 /* 检测任务是否停止 */
 int     job_is_stopped(job_t job);
 /* 将任务放置到前台 */
-void    put_job_fg(job_t job);
+void    put_job_fg(job_t job, int cont);
 /* 继续任务 */
 void    continue_job(job_t job, int foreground);
 

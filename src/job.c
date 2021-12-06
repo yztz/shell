@@ -199,7 +199,7 @@ int execute_job(job_t job) {
     add_to_jobs(job);
 
     if (job->fg) {
-        put_job_fg(job);
+        put_job_fg(job, 0);
     }
     collect_completed_jobs();
     return 0;
@@ -324,18 +324,20 @@ void update_status() {
     } while(!change_proc_status(pid, status));
 }
 
-void put_job_fg(job_t job) {
+void put_job_fg(job_t job, int cont) {
     job->fg = 1;
     tcsetpgrp(terminal, job->pgid);
     set_terminal_flag(job->terminal_flag);
 
-
-    if (kill(-job->pgid, SIGCONT)) {
-        error("fail to continue the job");
-        return;
+    if (cont) {
+        if (kill(-job->pgid, SIGCONT)) {
+            error("fail to continue the job");
+            return;
+        }
     }
+    
 
-    debug("waiting...");
+    debug("start waiting...");
     wait_job(job);
 
     tcsetpgrp(terminal, pgid);
@@ -355,7 +357,7 @@ void continue_job(job_t job, int foreground) {
         clear_status(job->processes[i]->status, STOPPED);
     }
 
-    if(foreground) put_job_fg(job);
+    if(foreground) put_job_fg(job, 1);
 }
 
 int execute_process(proc_t process,
