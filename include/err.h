@@ -6,17 +6,21 @@
 #include <string.h>
 #include "common.h"
 
-#define MAX_MSG_LENGTH 255
+#define MAX_MSG_LENGTH 1024
 
-#define _MAKE_OUT(title, file, color)                                    \
-    va_list argptr;                                                      \
-    va_start(argptr, msg);                                               \
-    char* buffer = (char*)malloc(MAX_MSG_LENGTH);                        \
-    snprintf(buffer, MAX_MSG_LENGTH, color "[ %s ] %s" COLOR_CLEAR "\n", \
-             title, msg);                                                \
-    vfprintf(file, buffer, argptr);                                      \
-    free(buffer);                                                        \
-    va_end(argptr);
+#define _MAKE_OUT(title, file, color)                                     \
+    do {                                                                  \
+        va_list argptr;                                                   \
+        va_start(argptr, msg);                                            \
+        char* buffer = (char*)malloc(MAX_MSG_LENGTH);                     \
+        snprintf(buffer, MAX_MSG_LENGTH,                                  \
+                 "[ " color "%s" COLOR_CLEAR " ] " color "%s" COLOR_CLEAR \
+                 "\n",                                                    \
+                 title, msg);                                             \
+        vfprintf(file, buffer, argptr);                                   \
+        free(buffer);                                                     \
+        va_end(argptr);                                                   \
+    } while (0);
 
 INLINE void info(const char* msg, ...) {
     _MAKE_OUT("Info", stdout, BLUE);

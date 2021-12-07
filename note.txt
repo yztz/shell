@@ -25,6 +25,7 @@ sigqueue
 tcgetpgrp
 tcsetpgrp
 setpgid
+https://www.cnblogs.com/black-mamba/p/6687102.html
 
 // 输入输出重定向
 dup2

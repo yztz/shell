@@ -11,10 +11,11 @@ int terminal = STDIN_FILENO;  // 终端输入为标准输入
 struct termios terminal_flag;
 int pgid;
 
-char current_dir[255];
-char default_dir[255];
+char current_dir[PATH_LENTH];
+char default_dir[PATH_LENTH];
 
 void shell_init() {
+    // 这里的目的在于当ysh以后台形式运行时，则暂停ysh，直到切换到前台进程
     while (tcgetpgrp(terminal) != (pgid = getpgrp())) {
         kill(-pgid, SIGTTIN);
     }
@@ -27,8 +28,7 @@ void shell_init() {
 
     pgid = getpid();
     if (setpgid(pgid, pgid) < 0) {
-        error("Couldn't put the shell in its own process group");
-        exit(1);
+        panic("Couldn't put the shell in its own process group");
     }
 
     tcsetpgrp(terminal, pgid);
@@ -64,8 +64,8 @@ void restore_dir() {
 }
 
 char * readln() {
-    char prompt[512];
-    snprintf(prompt, 512, BOLD GREEN "Ysh: "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR, current_dir);
+    char prompt[PATH_LENTH * 2];
+    snprintf(prompt, PATH_LENTH * 2, BOLD GREEN "Ysh: "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR, current_dir);
     char * line;
     int len;
     do {

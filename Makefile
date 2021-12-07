@@ -1,7 +1,7 @@
 CC 				:= gcc
 CFLAGS 			+= -Wall 
 # -DDEBUG 用于测试环境
-CFLAGS  		+= -DDEBUG -g
+# CFLAGS  		+= -DDEBUG -g
 TARGET 			:= ysh
 
 LEX 			:= flex
