@@ -6,16 +6,16 @@
 
 #define TEST_LIST_MAX 255
 
-void _test_add_func(void (*fn)(void), char *name);
+void _test_add_func(void (*fn)(void), char* name);
 
 void start_test();
 
-
-#define TEST(NAME) \
-    static void __TEST_##NAME(); \
-    _constructor static void __INIT_TEST_##NAME() {  \
-        _test_add_func(__TEST_##NAME, #NAME);   \
-    }   \
+#define TEST(NAME, enable)                          \
+    static void __TEST_##NAME();                    \
+    _constructor static void __INIT_TEST_##NAME() { \
+        if (enable)                                 \
+            _test_add_func(__TEST_##NAME, #NAME);   \
+    }                                               \
     static void __TEST_##NAME()
 
 #endif

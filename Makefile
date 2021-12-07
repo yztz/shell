@@ -1,7 +1,17 @@
 CC 				:= gcc
 CFLAGS 			+= -Wall 
-# -DDEBUG 用于测试环境
-# CFLAGS  		+= -DDEBUG -g
+##########################
+# 测试用例
+# yes or no
+TEST			?= no
+##########################
+# 调试信息
+# LOG_LEVEL只在DEBUG=yes时生效: LOG_DEBUG, LOG_INFO, LOG_ERROR, LOG_PANIC
+# yes or no
+DEBUG 			?= no
+LOG_LEVEL		?= LOG_PANIC
+##########################
+
 TARGET 			:= ysh
 
 LEX 			:= flex
@@ -19,7 +29,17 @@ LEX_OUT			:= $(LEX_OUT_H) $(LEX_OUT_C)
 BISON_OUT 		:= $(BISON_OUT_H) $(BISON_OUT_C)
 
 OUT_PATH		:= target
-SRC 			:= $(wildcard src/*.c test/*.c) $(wildcard src/builtins/*.c)
+
+ifeq ($(DEBUG), yes)
+CFLAGS  		+= -D$(LOG_LEVEL) -g
+endif
+ifeq ($(TEST), yes) 
+CFLAGS  		+= -DTEST_SAMPLE
+SRC 			:= $(wildcard src/*.c) $(wildcard src/builtins/*.c) $(wildcard test/*.c)
+else
+SRC 			:= $(wildcard src/*.c) $(wildcard src/builtins/*.c)
+endif
+
 SRC_NO_DIR		:= $(notdir $(SRC))
 OBJ			 	:= $(SRC_NO_DIR:%.c=%.o)
 INCLUDE_PATH	:= include

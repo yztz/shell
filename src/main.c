@@ -8,7 +8,9 @@
 void wait_input();
 
 int main() {
-    // start_test();
+    #ifdef TEST_SAMPLE
+    start_test();
+    #endif
     wait_input();
     return 0;
 }

@@ -3,7 +3,7 @@
 #include "err.h"
 #include "test.h"
 
-TEST(open) {
+TEST(open, 0) {
     char buffer[30];
     size_t len;
     int fd = open("test.txt", O_RDONLY);
@@ -17,7 +17,7 @@ TEST(open) {
     info("fd = %d len = %d content = %s", fd, len, buffer);
 }
 
-TEST(open_fork) {
+TEST(open_fork, 0) {
     char buffer[30];
     size_t len;
     int fd = open("test.txt", O_RDONLY);
