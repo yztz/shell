@@ -26,7 +26,8 @@ bg     fg
 1                    高亮加粗显示
 4                    使用下划线
 */
-#define ATTR(attr) "\033["#attr"m"
+// \001 & \002 是为了修复跨行输入的bug
+#define ATTR(attr) "\001\033["#attr"m\002"
 #define COLOR_CLEAR ATTR(0)
 #define RED ATTR(31)
 #define YELLOW ATTR(33)

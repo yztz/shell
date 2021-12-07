@@ -63,9 +63,12 @@ void restore_dir() {
     set_dir(default_dir);
 }
 
+#define PROMPT_FORMAT   \
+    BOLD GREEN "Ysh: "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR
+    
 char * readln() {
     char prompt[PATH_LENTH * 2];
-    snprintf(prompt, PATH_LENTH * 2, BOLD GREEN "Ysh: "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR, current_dir);
+    snprintf(prompt, PATH_LENTH * 2, PROMPT_FORMAT, current_dir);
     char * line;
     int len;
     do {

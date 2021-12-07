@@ -1,8 +1,11 @@
 #include <stdio.h>
-#include "test.h"
 #include "parser.h"
 #include "lex.h"
 #include "env.h"
+
+#ifdef TEST_SAMPLE
+#include "test.h"
+#endif
 
 
 void wait_input();

@@ -14,6 +14,7 @@
         "builtin.h": "c",
         "env.h": "c",
         "common.h": "c",
-        "readline.h": "c"
+        "readline.h": "c",
+        "termios.h": "c"
     }
 }
