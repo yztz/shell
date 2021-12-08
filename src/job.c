@@ -11,13 +11,8 @@
 #include "env.h"
 #include "err.h"
 
-extern int tty_interactive;
-extern int terminal;
-extern pid_t pgid;
-extern struct termios terminal_flag;
-
 struct job job_list_head;
-int next_id = 1;
+static int next_id = 1;
 
 INLINE void _init_proc(proc_t process) {
     process->status = 0;
@@ -38,7 +33,7 @@ INLINE void _init_job(job_t job) {
     job->stderr = STDERR_FILENO;
     job->fg = 1;
     job->process_num = 0;
-    job->terminal_flag = terminal_flag;
+    job->terminal_flag = ysh_terminal_flag;
 }
 
 job_t create_job() {
@@ -326,7 +321,7 @@ void update_status() {
 
 void put_job_fg(job_t job, int cont) {
     job->fg = 1;
-    tcsetpgrp(terminal, job->pgid);
+    tcsetpgrp(ysh_terminal, job->pgid);
     set_terminal_flag(job->terminal_flag);
 
     if (cont) {
@@ -340,7 +335,7 @@ void put_job_fg(job_t job, int cont) {
     debug("start waiting...");
     wait_job(job);
 
-    tcsetpgrp(terminal, pgid);
+    tcsetpgrp(ysh_terminal, ysh_pgid);
     restore_terminal_flag(&job->terminal_flag);
 }
 

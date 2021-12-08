@@ -131,6 +131,8 @@ void    continue_job(job_t job, int foreground);
 // 其他
 //
 //------------------------------------
+extern struct job job_list_head;
+
 #define for_each_job(p, phead) \
     for (p = (phead)->next;p;p=p->next)
 

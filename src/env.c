@@ -7,17 +7,17 @@
 #include <readline/history.h>
 
 
-int terminal = STDIN_FILENO;  // 终端输入为标准输入
-struct termios terminal_flag;
-int pgid;
+int ysh_terminal = STDIN_FILENO;  // 终端输入为标准输入
+struct termios ysh_terminal_flag;
+int ysh_pgid;
 
 char current_dir[PATH_LENTH];
 char default_dir[PATH_LENTH];
 
 void shell_init() {
     // 这里的目的在于当ysh以后台形式运行时，则暂停ysh，直到切换到前台进程
-    while (tcgetpgrp(terminal) != (pgid = getpgrp())) {
-        kill(-pgid, SIGTTIN);
+    while (tcgetpgrp(ysh_terminal) != (ysh_pgid = getpgrp())) {
+        kill(-ysh_pgid, SIGTTIN);
     }
 
     signal(SIGINT, SIG_IGN);    // 用户中断
@@ -26,25 +26,25 @@ void shell_init() {
     signal(SIGTTIN, SIG_IGN);   // 后台要求读取
     signal(SIGTTOU, SIG_IGN);   // 后台要求输出
 
-    pgid = getpid();
-    if (setpgid(pgid, pgid) < 0) {
+    ysh_pgid = getpid();
+    if (setpgid(ysh_pgid, ysh_pgid) < 0) {
         panic("Couldn't put the shell in its own process group");
     }
 
-    tcsetpgrp(terminal, pgid);
+    tcsetpgrp(ysh_terminal, ysh_pgid);
     
     getcwd(current_dir, PATH_LENTH);
     getcwd(default_dir, PATH_LENTH);
-    tcgetattr(terminal, &terminal_flag);
+    tcgetattr(ysh_terminal, &ysh_terminal_flag);
 }
 
 
 int set_terminal_flag(struct termios flag) {
-    return tcsetattr(terminal, TCSADRAIN, &flag);
+    return tcsetattr(ysh_terminal, TCSADRAIN, &flag);
 }
 int restore_terminal_flag(struct termios *flag) {
-    tcgetattr(terminal, flag);
-    return tcsetattr(terminal, TCSADRAIN, &terminal_flag);
+    tcgetattr(ysh_terminal, flag);
+    return tcsetattr(ysh_terminal, TCSADRAIN, &ysh_terminal_flag);
 }
 
 
@@ -64,7 +64,7 @@ void restore_dir() {
 }
 
 #define PROMPT_FORMAT   \
-    BOLD GREEN "Ysh: "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR
+    BOLD GREEN SHELL_NAME": "BLUE"%s" COLOR_CLEAR WHITE"$ " COLOR_CLEAR
     
 char * readln() {
     char prompt[PATH_LENTH * 2];

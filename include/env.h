@@ -25,4 +25,8 @@ int         restore_terminal_flag(struct termios *flag);
 /* readline相关封装 */
 char *      readln();
 
+extern int ysh_terminal;
+extern pid_t ysh_pgid;
+extern struct termios ysh_terminal_flag;
+
 #endif
