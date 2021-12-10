@@ -2,6 +2,7 @@
 #define _H_ENV_
 
 #include <termios.h>
+#include <sys/types.h>
 #include "err.h"
 /* 路径的最大长度 */
 #define PATH_LENTH 1024
