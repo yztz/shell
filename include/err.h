@@ -1,5 +1,6 @@
 #ifndef _H_ERR_
 #define _H_ERR_
+#include <unistd.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,12 +39,23 @@
 #define MAX_MSG_LENGTH 1024
 /*
 直接将buffer声明为全局静态变量以节省malloc与free的时间开销
-但是造成一定程度上的空间浪费（许多文件都会使用日志）
-本着简单易用的原则，不想另外增加err.c文件
+但是造成一定程度上的空间浪费（许多文件都会使用日志）但是也有隔离文件日志的好处
+本着简单易用的原则，不另外增加err.c文件
 可以选择在main.c中定义这个变量，然后在该文件中使用extern来引入，但是这样在一定程度上也增加了耦合
 但是幸运的是，这几种模式的切换是非常简单的，只需要改变下面这条声明语句的方式即可
 */
 static char __err_msg_buffer__[MAX_MSG_LENGTH];
+static int __err_msg_std_out__ = STDOUT_FILENO;
+static int __err_msg_err_out__ = STDERR_FILENO;
+
+#define LOG_STD_OUT __err_msg_std_out__
+#define LOG_ERR_OUT __err_msg_err_out__
+
+INLINE void set_log_out(int out_fd, int err_fd) {
+    if(out_fd != -1) __err_msg_std_out__ = out_fd;
+    if(err_fd != -1) __err_msg_err_out__ = err_fd;
+}
+
 
 /*
 注意：下面的实现中，无论是宏实现，还是内联实现，对应的helper都是先使用snprintf先格式化了一遍
@@ -55,43 +67,43 @@ static char __err_msg_buffer__[MAX_MSG_LENGTH];
 //----------------------------------
 // inline implementation
 //----------------------------------
-#define _INLINE_OUT_HELPER(title, file, color)                    \
+#define _INLINE_OUT_HELPER(title, fd, color)                    \
     do {                                                          \
         va_list argptr;                                           \
         va_start(argptr, msg);                                    \
         snprintf(__err_msg_buffer__, MAX_MSG_LENGTH,              \
                  color "[ %s ] %s" COLOR_CLEAR "\n", title, msg); \
-        vfprintf(file, __err_msg_buffer__, argptr);               \
+        vdprintf(fd, __err_msg_buffer__, argptr);               \
         va_end(argptr);                                           \
     } while (0);
 
 INLINE void _inline_info(const char* msg, ...) {
 #ifdef LOG_INFO
-    _INLINE_OUT_HELPER("Info", stdout, BLUE);
+    _INLINE_OUT_HELPER("Info", LOG_STD_OUT, BLUE);
 #endif
 }
 
 INLINE void _inline_error(const char* msg, ...) {
 #ifdef LOG_ERROR
-    _INLINE_OUT_HELPER("Error", stderr, YELLOW);
+    _INLINE_OUT_HELPER("Error", LOG_ERR_OUT, YELLOW);
 #endif
 }
 
 INLINE void _inline_panic(const char* msg, ...) {
 #ifdef LOG_PANIC
-    _INLINE_OUT_HELPER("Panic", stderr, RED);
+    _INLINE_OUT_HELPER("Panic", LOG_ERR_OUT, RED);
 #endif
     exit(0);
 }
 
 INLINE void _inline_debug(const char* msg, ...) {
 #ifdef LOG_DEBUG
-    _INLINE_OUT_HELPER("Debug", stdout, ATTR(40) GREEN);
+    _INLINE_OUT_HELPER("Debug", LOG_STD_OUT, ATTR(40) GREEN);
 #endif
 }
 
 INLINE void _inline_message(const char* title, const char* msg, ...) {
-    _INLINE_OUT_HELPER(title, stdout, WHITE);
+    _INLINE_OUT_HELPER(title, LOG_STD_OUT, WHITE);
 }
 
 //----------------------------------
@@ -101,30 +113,30 @@ INLINE void _inline_message(const char* title, const char* msg, ...) {
 //----------------------------------
 // macro implementation
 //----------------------------------
-#define _MACRO_OUT_HELPER(title, msg, file, color, ...)           \
+#define _MACRO_OUT_HELPER(title, msg, fd, color, ...)           \
     do {                                                          \
         snprintf(__err_msg_buffer__, MAX_MSG_LENGTH,              \
                  color "[ %s ] %s" COLOR_CLEAR "\n", title, msg); \
-        fprintf(file, __err_msg_buffer__, ##__VA_ARGS__);         \
+        dprintf(fd, __err_msg_buffer__, ##__VA_ARGS__);         \
     } while (0);
 
 #ifdef LOG_DEBUG
 #define _macro_debug(msg, ...) \
-    _MACRO_OUT_HELPER("Debug", msg, stdout, ATTR(40) GREEN, ##__VA_ARGS__)
+    _MACRO_OUT_HELPER("Debug", msg, LOG_STD_OUT, ATTR(40) GREEN, ##__VA_ARGS__)
 #else
 #define _macro_debug(msg, ...)
 #endif
 
 #ifdef LOG_INFO
 #define _macro_info(msg, ...) \
-    _MACRO_OUT_HELPER("Info", msg, stdout, BLUE, ##__VA_ARGS__)
+    _MACRO_OUT_HELPER("Info", msg, LOG_STD_OUT, BLUE, ##__VA_ARGS__)
 #else
 #define _macro_info(msg, ...)
 #endif
 
 #ifdef LOG_ERROR
 #define _macro_error(msg, ...) \
-    _MACRO_OUT_HELPER("Error", msg, stderr, YELLOW, ##__VA_ARGS__)
+    _MACRO_OUT_HELPER("Error", msg, LOG_ERR_OUT, YELLOW, ##__VA_ARGS__)
 #else
 #define _macro_error(msg, ...)
 #endif
@@ -132,7 +144,7 @@ INLINE void _inline_message(const char* title, const char* msg, ...) {
 #ifdef LOG_PANIC
 #define _macro_panic(msg, ...)                                      \
     do {                                                            \
-        _MACRO_OUT_HELPER("Panic", msg, stderr, RED, ##__VA_ARGS__) \
+        _MACRO_OUT_HELPER("Panic", msg, LOG_ERR_OUT, RED, ##__VA_ARGS__) \
         exit(0);                                                    \
     } while (0);
 #else
@@ -140,24 +152,29 @@ INLINE void _inline_message(const char* title, const char* msg, ...) {
 #endif
 
 #define _macro_message(title, msg, ...) \
-    _MACRO_OUT_HELPER(title, msg, stdout, WHITE, ##__VA_ARGS__)
+    _MACRO_OUT_HELPER(title, msg, LOG_STD_OUT, WHITE, ##__VA_ARGS__)
 
 //----------------------------------
 // macro implementation end
 //----------------------------------
 
-/* using inline implementation */
-// #define info _inline_info
-// #define error _inline_error
-// #define panic _inline_panic
-// #define debug _inline_debug
-// #define message _inline_message
+/* uncomment to use inline implementation */
+#define USING_MACRO
 
+/* using inline implementation */
+#ifndef USING_MACRO
+#define info _inline_info
+#define error _inline_error
+#define panic _inline_panic
+#define debug _inline_debug
+#define message _inline_message
 /* using macro implementation */
+#else
 #define info _macro_info
 #define error _macro_error
 #define panic _macro_panic
 #define debug _macro_debug
 #define message _macro_message
+#endif
 
 #endif
