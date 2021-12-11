@@ -64,6 +64,19 @@ INLINE void set_log_out(int out_fd, int err_fd) {
 2.尤其是对于宏实现来说，传入的内容msg未知，可能是字符串字面量，可能是字符指针，这样做可以确保安全性。
 */
 
+/*
+对比
+性能：55开
+程序大小：
+macro
+   text    data     bss     dec     hex filename
+  32808    1168   87424  121400   1da38 ysh
+inline
+   text    data     bss     dec     hex filename
+  34451    1168   87424  123043   1e0a3 ./ysh
+inline > macro
+*/
+
 //----------------------------------
 // inline implementation
 //----------------------------------
