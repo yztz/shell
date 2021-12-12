@@ -157,14 +157,21 @@ int execute_job(job_t job) {
                 goto err;
             }
             if (pid == 0) {  // child
-                execute_process(process, job->pgid, in_file, out_file, err_file,
-                                job->fg);
+                int pid = getpid();
+                setpgid(getpid(), job->pgid ? job->pgid : pid); //------------------- 1
+                execute_process(process, in_file, out_file, err_file, job->fg);    
             } else {  // parent
                 process->pid = pid;
-                set_status(process->status, RUNNING);
+                set_status(process->status, RUNNING);           
                 if (!job->pgid) {
                     job->pgid = pid;
                 }
+                setpgid(pid, job->pgid);    //------------------- 2
+                /*
+                    可能会感到奇怪，为什么在子进程（1）处与父进程（2）处，要两次设置进程组？
+                    因为父子进程的执行顺序是不确定的，设置两次pgid是为了后续父进程的执行正确
+                    否则可能出现ECHILD: no such process的情况，尤其是在kill发送信号时
+                */
             }
         }
 
@@ -194,7 +201,7 @@ int execute_job(job_t job) {
     add_to_jobs(job);
 
     if (job->fg) {
-        put_job_fg(job, 0);
+        put_job_fg(job);
     }
     collect_completed_jobs();
     return 0;
@@ -319,24 +326,30 @@ void update_status() {
     } while(!change_proc_status(pid, status));
 }
 
-void put_job_fg(job_t job, int cont) {
+void put_job_fg(job_t job) {
     job->fg = 1;
     tcsetpgrp(ysh_terminal, job->pgid);
     set_terminal_flag(job->terminal_flag);
 
-    if (cont) {
-        if (kill(-job->pgid, SIGCONT)) {
-            error("fail to continue the job");
-            return;
-        }
+    if (kill(-job->pgid, SIGCONT)) {
+        error("fail to continue the job");
+        return;
     }
-    
 
     debug("start waiting...");
     wait_job(job);
 
     tcsetpgrp(ysh_terminal, ysh_pgid);
     restore_terminal_flag(&job->terminal_flag);
+}
+
+void put_job_bg(job_t job) {
+    job->fg = 0;
+
+    if (kill(-job->pgid, SIGCONT)) {
+        error("fail to continue the job");
+        return;
+    }
 }
 
 job_t find_job_by_id(int id) {
@@ -346,24 +359,30 @@ job_t find_job_by_id(int id) {
     }
     return NULL;
 }
-
+/*
+这里需要注意的一点在于，前台进程组的切换与输入输出阻塞的问题
+当后台进程需要输入或者输出时，会受到SIGTTIN信号，该信号往往会导致进程暂停
+所以对于fg操作来说，continue的流程应该为如下所示：
+1、将后台进程组设置为前台进程
+2、给进程组发送继续执行的信号
+3、等待该进程 
+不可乱序，因为如果2先于1执行，那么进程很有可能因为还没被设置为前台进程组而再次被暂停执行
+目前：1 2 3皆是在put_job_fg中进行的，continue_job仅仅只是清除暂停状态
+*/
 void continue_job(job_t job, int foreground) {
     for (size_t i = 0; i < job->process_num; i++) {
         clear_status(job->processes[i]->status, STOPPED);
     }
 
-    if(foreground) put_job_fg(job, 1);
+    if(foreground) put_job_fg(job);
+    else put_job_bg(job);
 }
 
 int execute_process(proc_t process,
-                    int pgid,
                     int in_file,
                     int out_file,
                     int err_file,
                     int fg){
-    pid_t pid = getpid();
-    pgid = pgid ? pgid : pid;
-    setpgid(pid, pgid);
     debug("ready to execute '%s' (in=%d, out=%d, err=%d)", process->args[0],
           in_file, out_file, err_file);
     debug("arg_list:");

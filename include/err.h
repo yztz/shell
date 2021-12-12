@@ -1,10 +1,10 @@
 #ifndef _H_ERR_
 #define _H_ERR_
-#include <unistd.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "common.h"
 
 /*
@@ -52,10 +52,11 @@ static int __err_msg_err_out__ = STDERR_FILENO;
 #define LOG_ERR_OUT __err_msg_err_out__
 
 INLINE void set_log_out(int out_fd, int err_fd) {
-    if(out_fd != -1) __err_msg_std_out__ = out_fd;
-    if(err_fd != -1) __err_msg_err_out__ = err_fd;
+    if (out_fd > 0)
+        __err_msg_std_out__ = out_fd;
+    if (err_fd > 0)
+        __err_msg_err_out__ = err_fd;
 }
-
 
 /*
 注意：下面的实现中，无论是宏实现，还是内联实现，对应的helper都是先使用snprintf先格式化了一遍
@@ -80,13 +81,13 @@ inline > macro
 //----------------------------------
 // inline implementation
 //----------------------------------
-#define _INLINE_OUT_HELPER(title, fd, color)                    \
+#define _INLINE_OUT_HELPER(title, fd, color)                      \
     do {                                                          \
         va_list argptr;                                           \
         va_start(argptr, msg);                                    \
         snprintf(__err_msg_buffer__, MAX_MSG_LENGTH,              \
                  color "[ %s ] %s" COLOR_CLEAR "\n", title, msg); \
-        vdprintf(fd, __err_msg_buffer__, argptr);               \
+        vdprintf(fd, __err_msg_buffer__, argptr);                 \
         va_end(argptr);                                           \
     } while (0);
 
@@ -126,11 +127,11 @@ INLINE void _inline_message(const char* title, const char* msg, ...) {
 //----------------------------------
 // macro implementation
 //----------------------------------
-#define _MACRO_OUT_HELPER(title, msg, fd, color, ...)           \
+#define _MACRO_OUT_HELPER(title, msg, fd, color, ...)             \
     do {                                                          \
         snprintf(__err_msg_buffer__, MAX_MSG_LENGTH,              \
                  color "[ %s ] %s" COLOR_CLEAR "\n", title, msg); \
-        dprintf(fd, __err_msg_buffer__, ##__VA_ARGS__);         \
+        dprintf(fd, __err_msg_buffer__, ##__VA_ARGS__);           \
     } while (0);
 
 #ifdef LOG_DEBUG
@@ -155,10 +156,10 @@ INLINE void _inline_message(const char* title, const char* msg, ...) {
 #endif
 
 #ifdef LOG_PANIC
-#define _macro_panic(msg, ...)                                      \
-    do {                                                            \
+#define _macro_panic(msg, ...)                                           \
+    do {                                                                 \
         _MACRO_OUT_HELPER("Panic", msg, LOG_ERR_OUT, RED, ##__VA_ARGS__) \
-        exit(0);                                                    \
+        exit(0);                                                         \
     } while (0);
 #else
 #define _macro_panic(msg, ...) exit(0)

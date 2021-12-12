@@ -99,13 +99,13 @@ void    collect_completed_jobs();
 
 //------------------------------------
 //
-// 进程&任务 控制
+// 进程 & 任务 控制
 //
 //------------------------------------
 /* 执行任务 */
 int     execute_job(job_t job);
 /* 执行进程 */
-int     execute_process(proc_t process, int pgid, int in_file, int out_file, int err_file, int fg);
+int     execute_process(proc_t process, int in_file, int out_file, int err_file, int fg);
 /* 阻塞，直到任务结束 */
 void    wait_job(job_t job);
 /* 给定waitpid返回status值，来设置对应pid进程的状态 */
@@ -121,7 +121,9 @@ int     job_is_completed(job_t job);
 /* 检测任务是否停止 */
 int     job_is_stopped(job_t job);
 /* 将任务放置到前台 */
-void    put_job_fg(job_t job, int cont);
+void    put_job_fg(job_t job);
+/* 将任务放置到后台 */
+void    put_job_bg(job_t job);
 /* 继续任务 */
 void    continue_job(job_t job, int foreground);
 

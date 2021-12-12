@@ -9,7 +9,7 @@ TEST(test_log, 0) {
     panic("you shoudn't do such a foolish thing!"); 
 }
 
-TEST(test_performance, 1) {
+TEST(test_performance, 0) {
     int fd_null = open("/dev/null", O_WRONLY);
     if (fd_null == -1) panic("open failure");
     set_log_out(fd_null, -1);
