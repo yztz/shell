@@ -31,7 +31,8 @@ proc_t current_proc = NULL;
 cmd: ID {
             if (current_job == NULL) {
                 current_job = create_job();
-                sfree(&command);
+                // sfree(&command);
+                if(command) *command = '\0';    // 直接置首位为null，而非free释放
             }
 
             if (current_proc == NULL) {

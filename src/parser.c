@@ -519,9 +519,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    31,    31,    48,    56,    57,    59,    65,    67,    68,
-      70,    71,    72,    74,    75,    77,    78,    83,    84,    86,
-      87,    89,    97
+       0,    31,    31,    49,    57,    58,    60,    66,    68,    69,
+      71,    72,    73,    75,    76,    78,    79,    84,    85,    87,
+      88,    90,    98
 };
 #endif
 
@@ -1115,7 +1115,8 @@ yyreduce:
         {
             if (current_job == NULL) {
                 current_job = create_job();
-                sfree(&command);
+                // sfree(&command);
+                if(command) *command = '\0';    // 直接置首位为null，而非free释放
             }
 
             if (current_proc == NULL) {
@@ -1128,11 +1129,11 @@ yyreduce:
 
             free((yyvsp[0].str));
         }
-#line 1132 "src/parser.c"
+#line 1133 "src/parser.c"
     break;
 
   case 3: /* arg: ID  */
-#line 48 "bison.y"
+#line 49 "bison.y"
         {   
             // debug("arg: %s", $1);
             process_add_arg(current_proc, strdup((yyvsp[0].str)));
@@ -1140,108 +1141,108 @@ yyreduce:
 
             free((yyvsp[0].str));
         }
-#line 1144 "src/parser.c"
+#line 1145 "src/parser.c"
     break;
 
   case 4: /* arg_list: %empty  */
-#line 56 "bison.y"
+#line 57 "bison.y"
                         {}
-#line 1150 "src/parser.c"
+#line 1151 "src/parser.c"
     break;
 
   case 5: /* arg_list: arg_list arg  */
-#line 57 "bison.y"
+#line 58 "bison.y"
                         {}
-#line 1156 "src/parser.c"
+#line 1157 "src/parser.c"
     break;
 
   case 6: /* simple_command: cmd arg_list  */
-#line 59 "bison.y"
+#line 60 "bison.y"
                              {
                                 // debug("add process...");
                                 job_add_process(current_job, current_proc);
                                 current_proc = NULL;
                             }
-#line 1166 "src/parser.c"
+#line 1167 "src/parser.c"
     break;
 
   case 7: /* pipe: PIPE  */
-#line 65 "bison.y"
+#line 66 "bison.y"
            {append("|");}
-#line 1172 "src/parser.c"
+#line 1173 "src/parser.c"
     break;
 
   case 8: /* simple_command_list: simple_command  */
-#line 67 "bison.y"
+#line 68 "bison.y"
                                     {}
-#line 1178 "src/parser.c"
+#line 1179 "src/parser.c"
     break;
 
   case 9: /* simple_command_list: simple_command_list pipe simple_command  */
-#line 68 "bison.y"
+#line 69 "bison.y"
                                               {}
-#line 1184 "src/parser.c"
+#line 1185 "src/parser.c"
     break;
 
   case 10: /* redirection: LESS ID  */
-#line 70 "bison.y"
+#line 71 "bison.y"
                         {current_job->in_file = strdup((yyvsp[0].str));append("<");append((yyvsp[0].str));free((yyvsp[0].str));}
-#line 1190 "src/parser.c"
+#line 1191 "src/parser.c"
     break;
 
   case 11: /* redirection: GREATER ID  */
-#line 71 "bison.y"
+#line 72 "bison.y"
                           {current_job->out_file = strdup((yyvsp[0].str));append(">");append((yyvsp[0].str));free((yyvsp[0].str));}
-#line 1196 "src/parser.c"
+#line 1197 "src/parser.c"
     break;
 
   case 12: /* redirection: '2' GREATER ID  */
-#line 72 "bison.y"
+#line 73 "bison.y"
                           {current_job->err_file = strdup((yyvsp[0].str));append("2>");append((yyvsp[0].str));free((yyvsp[0].str));}
-#line 1202 "src/parser.c"
+#line 1203 "src/parser.c"
     break;
 
   case 14: /* redirection_list: redirection_list redirection  */
-#line 75 "bison.y"
+#line 76 "bison.y"
                                     {}
-#line 1208 "src/parser.c"
+#line 1209 "src/parser.c"
     break;
 
   case 16: /* background: AMPERSAND  */
-#line 78 "bison.y"
+#line 79 "bison.y"
                 {
         current_job->fg = 0;
         append("&");
     }
-#line 1217 "src/parser.c"
+#line 1218 "src/parser.c"
     break;
 
   case 17: /* terminator: NEWLINE  */
-#line 83 "bison.y"
+#line 84 "bison.y"
                         {}
-#line 1223 "src/parser.c"
+#line 1224 "src/parser.c"
     break;
 
   case 18: /* terminator: SIMECOLON  */
-#line 84 "bison.y"
+#line 85 "bison.y"
                         {}
-#line 1229 "src/parser.c"
+#line 1230 "src/parser.c"
     break;
 
   case 19: /* pipeline: terminator  */
-#line 86 "bison.y"
+#line 87 "bison.y"
                         {}
-#line 1235 "src/parser.c"
+#line 1236 "src/parser.c"
     break;
 
   case 20: /* pipeline: simple_command_list redirection_list background terminator  */
-#line 87 "bison.y"
+#line 88 "bison.y"
                                                                     {}
-#line 1241 "src/parser.c"
+#line 1242 "src/parser.c"
     break;
 
   case 21: /* pipeline_list: pipeline  */
-#line 89 "bison.y"
+#line 90 "bison.y"
                         {
                     current_job->command = strdup(command);
                     debug("command: %s", command);
@@ -1250,17 +1251,17 @@ yyreduce:
                     debug("the result of execution is: %d", res);
                     current_job = NULL;
                 }
-#line 1254 "src/parser.c"
+#line 1255 "src/parser.c"
     break;
 
   case 22: /* pipeline_list: pipeline_list pipeline  */
-#line 97 "bison.y"
+#line 98 "bison.y"
                                 {}
-#line 1260 "src/parser.c"
+#line 1261 "src/parser.c"
     break;
 
 
-#line 1264 "src/parser.c"
+#line 1265 "src/parser.c"
 
       default: break;
     }
@@ -1454,7 +1455,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 101 "bison.y"
+#line 102 "bison.y"
 
 
 void yyerror(char *s) {
