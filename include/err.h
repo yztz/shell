@@ -91,31 +91,32 @@ inline > macro
         va_end(argptr);                                           \
     } while (0);
 
+_check_format(1, 2)
 INLINE void _inline_info(const char* msg, ...) {
 #ifdef LOG_INFO
     _INLINE_OUT_HELPER("Info", LOG_STD_OUT, BLUE);
 #endif
 }
-
+_check_format(1, 2)
 INLINE void _inline_error(const char* msg, ...) {
 #ifdef LOG_ERROR
     _INLINE_OUT_HELPER("Error", LOG_ERR_OUT, YELLOW);
 #endif
 }
-
+_check_format(1, 2)
 INLINE void _inline_panic(const char* msg, ...) {
 #ifdef LOG_PANIC
     _INLINE_OUT_HELPER("Panic", LOG_ERR_OUT, RED);
 #endif
     exit(0);
 }
-
+_check_format(1, 2)
 INLINE void _inline_debug(const char* msg, ...) {
 #ifdef LOG_DEBUG
     _INLINE_OUT_HELPER("Debug", LOG_STD_OUT, ATTR(40) GREEN);
 #endif
 }
-
+_check_format(2, 3)
 INLINE void _inline_message(const char* title, const char* msg, ...) {
     _INLINE_OUT_HELPER(title, LOG_STD_OUT, WHITE);
 }
@@ -173,7 +174,7 @@ INLINE void _inline_message(const char* title, const char* msg, ...) {
 //----------------------------------
 
 /* uncomment to use inline implementation */
-#define USING_MACRO
+// #define USING_MACRO
 
 /* using inline implementation */
 #ifndef USING_MACRO

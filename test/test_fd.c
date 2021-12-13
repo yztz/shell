@@ -11,10 +11,10 @@ TEST(open, 0) {
 
     len = read(fd, buffer, 30);
     buffer[len] = '\0';
-    info("fd = %d len = %d content = %s", fd, len, buffer);
+    info("fd = %d len = %ld content = %s", fd, len, buffer);
     len = read(fd2, buffer, 30);
     buffer[len] = '\0';
-    info("fd = %d len = %d content = %s", fd, len, buffer);
+    info("fd = %d len = %ld content = %s", fd, len, buffer);
 }
 
 TEST(open_fork, 0) {
@@ -26,10 +26,10 @@ TEST(open_fork, 0) {
     if (pid == 0) { // child
         len = read(fd, buffer, 30);
         buffer[len] = '\0';
-        info("child: fd = %d len = %d content = %s", fd, len, buffer);
+        info("child: fd = %d len = %ld content = %s", fd, len, buffer);
     } else {
         len = read(fd, buffer, 30);
         buffer[len] = '\0';
-        info("parent: fd = %d len = %d content = %s", fd, len, buffer);
+        info("parent: fd = %d len = %ld content = %s", fd, len, buffer);
     }
 }

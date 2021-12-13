@@ -1246,7 +1246,7 @@ yyreduce:
                     current_job->command = strdup(command);
                     debug("command: %s", command);
                     debug("start execution");
-                    int res = execute_job(current_job);
+                    int res _unused = execute_job(current_job);
                     debug("the result of execution is: %d", res);
                     current_job = NULL;
                 }
@@ -1466,31 +1466,34 @@ void yyerror(char *s) {
     sfree(&command); */
 }
 
+/*
+自动空格分割的可变长字符串
+*/
 void append(const char *token) {
     if(!token) return;
     char *new_command;
     int token_len = strlen(token);
     if (token_len == 0) return;
 
-    if (!command) {
+    if (!command) { // 当前串为空时，申请max(固定配额，token串长度 + '\0')
         command_size = max(token_len + 1, COMMAND_INIT_SIZE);
         command = (char *)malloc(command_size);
         if (!command) panic("memory alloc failure");
-        strcpy(command, token);
+        strcpy(command, token); // 拷贝
         return;
     }
 
-    int old_len = strlen(command);
-    int new_len = old_len + token_len + 2;  //+1 '\0' + 1空格分割
-    if (new_len > command_size) {
-        while (command_size < new_len) command_size *= 2;
+    int old_len = strlen(command);  // 获取旧串长度
+    int new_len = old_len + token_len + 2;  //+ 1 '\0' + 1空格分割
+    if (new_len > command_size) {   // 超出max_size
+        while (command_size < new_len) command_size *= 2; // 不断×2扩容直到满足大小
         new_command = (char *)malloc(command_size);
         if (!new_command) panic("memory alloc failure");
-        strcpy(new_command, command);
-        free(command);
+        strcpy(new_command, command);   // 拷贝旧串
+        free(command);  // 释放旧串
         command = new_command;
     }
-    *(command + old_len) = ' ';
-    strcpy(command + old_len + 1, token);
+    *(command + old_len) = ' '; // 添加空格分割
+    strcpy(command + old_len + 1, token); // 拷贝新串
 
 }

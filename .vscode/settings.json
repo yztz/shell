@@ -16,7 +16,8 @@
         "common.h": "c",
         "readline.h": "c",
         "termios.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "fcntl.h": "c"
     },
     "C_Cpp.dimInactiveRegions": false
 }

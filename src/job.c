@@ -1,4 +1,3 @@
-#include "job.h"
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
@@ -7,7 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "builtin.h"
-#include "common.h"
+#include "job.h"
 #include "env.h"
 #include "err.h"
 
@@ -170,7 +169,8 @@ int execute_job(job_t job) {
                 /*
                     可能会感到奇怪，为什么在子进程（1）处与父进程（2）处，要两次设置进程组？
                     因为父子进程的执行顺序是不确定的，设置两次pgid是为了后续父进程的执行正确
-                    否则可能出现ECHILD: no such process的情况，尤其是在kill发送信号时
+                    否则可能出现ECHILD: no such process的情况，尤其是在kill发送信号时。
+                    see also: https://www.cnblogs.com/zengyiwen/p/5755191.html
                 */
             }
         }

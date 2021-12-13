@@ -9,10 +9,16 @@ TEST(test_log, 0) {
     panic("you shoudn't do such a foolish thing!"); 
 }
 
-TEST(test_performance, 0) {
+TEST(test_performance, 1) {
     int fd_null = open("/dev/null", O_WRONLY);
     if (fd_null == -1) panic("open failure");
     set_log_out(fd_null, -1);
     for(int i = 0; i < 1000000; i++) debug("current i is %d", i);
     close(fd_null);
+}
+
+TEST(test_bad_format, 0) {
+    // int a = 2;
+    // debug("a bad formt a = %s", a); // segmentation fault
+    // printf("a bad formt a = %s", a);
 }

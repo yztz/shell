@@ -6,6 +6,7 @@
 #define _unused __attribute__((unused))
 #define _constructor __attribute__((constructor))
 #define _noreturn __attribute__((noreturn))
+#define _check_format(m, n) __attribute__((format(printf, m, n)))
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 

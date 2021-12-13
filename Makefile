@@ -1,14 +1,12 @@
 CC 				:= gcc
 CFLAGS 			+= -Wall 
-##########################
-# 测试用例
+#########测试用例##########
 # yes or no
 TEST			?= no
-##########################
-# 调试信息
-# LOG_LEVEL只在DEBUG=yes时生效: LOG_DEBUG, LOG_INFO, LOG_ERROR, LOG_PANIC
+#########调试信息##########
 # yes or no
 DEBUG 			?= no
+# LOG_LEVEL只在DEBUG=yes时生效: LOG_DEBUG, LOG_INFO, LOG_ERROR, LOG_PANIC
 LOG_LEVEL		?= LOG_PANIC
 ##########################
 

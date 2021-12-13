@@ -12,7 +12,7 @@ BUILT_IN(fg) {
             continue_job(job, 1);
             return 0;
         } else {
-            umsg("job ID = %d doesn't exist");
+            umsg("job ID = %s doesn't exist", id_str);
             return -1;
         }
     } else {
